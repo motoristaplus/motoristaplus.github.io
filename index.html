@@ -267,7 +267,7 @@
       <span class="tab-icon">📊</span>Painel
     </button>
     <button class="tab" onclick="switchTab('ganhos')">
-      <span class="tab-icon">💰</span>Faturamento
+      <span class="tab-icon">💰</span>GANHOS
     </button>
     <button class="tab" onclick="switchTab('gastos')">
       <span class="tab-icon">🔴</span>Gastos
@@ -316,7 +316,7 @@
 
       <div class="metrics">
         <div class="metric">
-          <div class="metric-label">Faturamento</div>
+          <div class="metric-label">GANHOS</div>
           <div class="metric-value green" id="m-ganhos">R$ 0</div>
         </div>
         <div class="metric">
@@ -362,7 +362,7 @@
       </div>
 
       <div class="card">
-        <div class="card-title">🚗 Faturamento por Plataforma <span id="plataforma-sub"></span></div>
+        <div class="card-title">🚗 GANHOS por Plataforma <span id="plataforma-sub"></span></div>
         <div class="chart-wrap h-180">
           <canvas id="plataforma-chart"></canvas>
         </div>
@@ -394,7 +394,7 @@
         </div>
       </div>
       <div class="card" id="monthly-card">
-        <div class="card-title">Faturamento por mês</div>
+        <div class="card-title">GANHOS por mês</div>
         <div id="monthly-breakdown"></div>
       </div>
 
@@ -439,7 +439,7 @@
     <!-- GANHOS -->
     <div id="tab-ganhos" class="section">
       <div class="card">
-        <div class="card-title">Registrar faturamento</div>
+        <div class="card-title">Registrar GANHOS</div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Valor (R$)</label>
@@ -488,8 +488,8 @@
       </div>
 
       <div class="card">
-        <div class="card-title">Faturamento registrado <span id="count-ganhos">0</span></div>
-        <div id="lista-ganhos"><div class="empty"><div class="empty-icon">💰</div>Nenhum faturamento registrado ainda.</div></div>
+        <div class="card-title">GANHOS registrado <span id="count-ganhos">0</span></div>
+        <div id="lista-ganhos"><div class="empty"><div class="empty-icon">💰</div>Nenhum GANHOS registrado ainda.</div></div>
       </div>
     </div>
 
@@ -602,7 +602,7 @@
 <!-- Modal editar ganho -->
 <div class="modal-overlay" id="edit-ganho-modal" onclick="closeEditGanhoModal(event)">
   <div class="modal">
-    <div class="modal-title">✏️ Editar faturamento</div>
+    <div class="modal-title">✏️ Editar GANHOS</div>
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Valor (R$)</label>
@@ -1128,7 +1128,7 @@ function baterPonto() {
     renderPonto();
     atualizarBotaoHorasHoje();
     renderTempoOn();
-    alert('Turno encerrado!\nEsse turno: ' + horasFmt + '\nTotal pendente de lançar: ' + totalPendenteFmt + '\n\nQuando for lançar o faturamento, use o botão "Usar últimas marcações" no formulário de Faturamento.');
+    alert('Turno encerrado!\nEsse turno: ' + horasFmt + '\nTotal pendente de lançar: ' + totalPendenteFmt + '\n\nQuando for lançar o GANHOS, use o botão "Usar últimas marcações" no formulário de GANHOS.');
   }
 }
 
@@ -1173,7 +1173,7 @@ function adicionarGanho() {
 function renderGanhos() {
   const el = document.getElementById('lista-ganhos');
   document.getElementById('count-ganhos').textContent = state.ganhos.length;
-  if (!state.ganhos.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">💰</div>Nenhum faturamento registrado ainda.</div>'; return; }
+  if (!state.ganhos.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">💰</div>Nenhum GANHOS registrado ainda.</div>'; return; }
   el.innerHTML = [...state.ganhos].reverse().map(g => `
     <div class="list-item">
       <div class="item-icon earn">🚗</div>
@@ -1190,7 +1190,7 @@ function renderGanhos() {
 }
 
 function removerGanho(id) {
-  if (!confirm('Remover este faturamento?')) return;
+  if (!confirm('Remover este GANHOS?')) return;
   state.ganhos = state.ganhos.filter(g => g.id !== id);
   save(); renderGanhos(); renderDashboard();
 }
@@ -1574,7 +1574,7 @@ function renderLucroDiarioChart(fg, fe) {
           callbacks: {
             afterBody: ctx => {
               const i = ctx[0].dataIndex;
-              return ['Faturamento: ' + fmt(ganhosArr[i]), 'Gastos: ' + fmt(gastosArr[i])];
+              return ['GANHOS: ' + fmt(ganhosArr[i]), 'Gastos: ' + fmt(gastosArr[i])];
             },
             label: ctx => 'Lucro: ' + fmt(ctx.raw)
           }
@@ -1612,7 +1612,7 @@ function renderPlataformaChart(fg) {
 
   if (total <= 0) {
     canvas.style.display = 'none';
-    canvas.parentElement.insertAdjacentHTML('beforeend', '<div class="chart-empty">Nenhum faturamento no período.</div>');
+    canvas.parentElement.insertAdjacentHTML('beforeend', '<div class="chart-empty">Nenhum GANHOS no período.</div>');
     return;
   }
   canvas.style.display = 'block';
@@ -2024,7 +2024,7 @@ function renderMonthly() {
         '<span>' + MESES[m] + ' ' + y + '</span>' +
         '<span class="val ' + cls + '">' + fmt(liq) + ' líq.</span>' +
       '</div>' +
-      '<div class="month-row"><span>Faturamento bruto</span><span class="val green">+' + fmt(d.ganhos) + '</span></div>' +
+      '<div class="month-row"><span>GANHOS bruto</span><span class="val green">+' + fmt(d.ganhos) + '</span></div>' +
       '<div class="month-row"><span>Gastos</span><span class="val red">-' + fmt(d.gastos) + '</span></div>' +
     '</div>';
   }).join('');
