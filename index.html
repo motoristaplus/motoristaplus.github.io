@@ -257,8 +257,8 @@
     <button class="tab active" onclick="switchTab('dashboard')">
       <span class="tab-icon">📊</span>Painel
     </button>
-    <button class="tab" onclick="switchTab('ganhos')">
-      <span class="tab-icon">💰</span>Ganhos
+    <button class="tab" onclick="switchTab('FATURAMENTO')">
+      <span class="tab-icon">💰</span>FATURAMENTO
     </button>
     <button class="tab" onclick="switchTab('gastos')">
       <span class="tab-icon">🔴</span>Gastos
@@ -307,8 +307,8 @@
 
       <div class="metrics">
         <div class="metric">
-          <div class="metric-label">Ganhos</div>
-          <div class="metric-value green" id="m-ganhos">R$ 0</div>
+          <div class="metric-label">FATURAMENTO</div>
+          <div class="metric-value green" id="m-FATURAMENTO">R$ 0</div>
         </div>
         <div class="metric">
           <div class="metric-label">Gastos</div>
@@ -337,7 +337,7 @@
       </div>
 
       <div class="card">
-        <div class="card-title">Ganhos — últimos 7 dias</div>
+        <div class="card-title">FATURAMENTO — últimos 7 dias</div>
         <div class="week-chart" id="week-chart"></div>
       </div>
 
@@ -349,7 +349,7 @@
       </div>
 
       <div class="card">
-        <div class="card-title">🚗 Ganhos por Plataforma <span id="plataforma-sub"></span></div>
+        <div class="card-title">🚗 FATURAMENTO por Plataforma <span id="plataforma-sub"></span></div>
         <div class="chart-wrap h-180">
           <canvas id="plataforma-chart"></canvas>
         </div>
@@ -381,7 +381,7 @@
         </div>
       </div>
       <div class="card" id="monthly-card">
-        <div class="card-title">Ganhos por mês</div>
+        <div class="card-title">FATURAMENTO por mês</div>
         <div id="monthly-breakdown"></div>
       </div>
 
@@ -423,8 +423,8 @@
       </div>
     </div>
 
-    <!-- GANHOS -->
-    <div id="tab-ganhos" class="section">
+    <!-- FATURAMENTO -->
+    <div id="tab-FATURAMENTO" class="section">
       <div class="card">
         <div class="card-title">Registrar ganho</div>
         <div class="form-row">
@@ -475,8 +475,8 @@
       </div>
 
       <div class="card">
-        <div class="card-title">Ganhos registrados <span id="count-ganhos">0</span></div>
-        <div id="lista-ganhos"><div class="empty"><div class="empty-icon">💰</div>Nenhum ganho registrado ainda.</div></div>
+        <div class="card-title">FATURAMENTO registrados <span id="count-FATURAMENTO">0</span></div>
+        <div id="lista-FATURAMENTO"><div class="empty"><div class="empty-icon">💰</div>Nenhum ganho registrado ainda.</div></div>
       </div>
     </div>
 
@@ -712,7 +712,7 @@ const CAT_BADGE = { gas:'badge-amber', manut:'badge-red', seguro:'badge-blue', a
 
 const DEFAULT_STATE = {
   meta: 800,
-  ganhos: [],
+  FATURAMENTO: [],
   gastos: [],
   turno: null,
   turnosHistorico: [],
@@ -845,7 +845,7 @@ function conectarDadosNuvem() {
     if (doc.exists) {
       state = doc.data();
       if (!('turno' in state)) state.turno = null;
-      if (!state.ganhos) state.ganhos = [];
+      if (!state.FATURAMENTO) state.FATURAMENTO = [];
       if (!state.gastos) state.gastos = [];
       if (!state.turnosHistorico) state.turnosHistorico = [];
       if (!state.ultimoValorPorCategoria) state.ultimoValorPorCategoria = {};
@@ -872,7 +872,7 @@ function save() {
 
 function iniciarApp() {
   renderDashboard();
-  renderGanhos();
+  renderFATURAMENTO();
   renderGastos();
   renderPonto();
   renderTempoOn();
@@ -1097,26 +1097,26 @@ function baterPonto() {
     renderPonto();
     atualizarBotaoHorasHoje();
     renderTempoOn();
-    alert('Turno encerrado!\nEsse turno: ' + horasFmt + '\nTotal de hoje: ' + totalHojeFmt + '\n\nQuando for lançar o ganho do dia, use o botão "Usar horas de hoje" no formulário de Ganhos.');
+    alert('Turno encerrado!\nEsse turno: ' + horasFmt + '\nTotal de hoje: ' + totalHojeFmt + '\n\nQuando for lançar o ganho do dia, use o botão "Usar horas de hoje" no formulário de FATURAMENTO.');
   }
 }
 
 function switchTab(t) {
-  document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('active', ['dashboard','ganhos','gastos','historico','tempoon'][i]===t));
+  document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('active', ['dashboard','FATURAMENTO','gastos','historico','tempoon'][i]===t));
   document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
   document.getElementById('content').scrollTop = 0;
   if (t==='dashboard') renderDashboard();
   if (t==='historico') renderHistorico();
-  if (t==='ganhos') atualizarBotaoHorasHoje();
+  if (t==='FATURAMENTO') atualizarBotaoHorasHoje();
   if (t==='tempoon') renderTempoOn();
 }
 
-// ---- GANHOS ----
+// ---- FATURAMENTO ----
 function adicionarGanho() {
   const v = parseFloat(document.getElementById('g-valor').value);
   if (!v || v <= 0) { alert('Informe um valor válido.'); return; }
-  state.ganhos.push({
+  state.FATURAMENTO.push({
     id: Date.now(), valor: v,
     plataforma: document.getElementById('g-plataforma').value,
     data: document.getElementById('g-data').value || hoje(),
@@ -1131,15 +1131,15 @@ function adicionarGanho() {
   atualizarLegendaHoras();
   document.getElementById('g-km').value = '';
   document.getElementById('g-obs').value = '';
-  save(); renderGanhos(); renderGastos(); renderDashboard();
+  save(); renderFATURAMENTO(); renderGastos(); renderDashboard();
   switchTab('dashboard');
 }
 
-function renderGanhos() {
-  const el = document.getElementById('lista-ganhos');
-  document.getElementById('count-ganhos').textContent = state.ganhos.length;
-  if (!state.ganhos.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">💰</div>Nenhum ganho registrado ainda.</div>'; return; }
-  el.innerHTML = [...state.ganhos].reverse().map(g => `
+function renderFATURAMENTO() {
+  const el = document.getElementById('lista-FATURAMENTO');
+  document.getElementById('count-FATURAMENTO').textContent = state.FATURAMENTO.length;
+  if (!state.FATURAMENTO.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">💰</div>Nenhum ganho registrado ainda.</div>'; return; }
+  el.innerHTML = [...state.FATURAMENTO].reverse().map(g => `
     <div class="list-item">
       <div class="item-icon earn">🚗</div>
       <div class="item-body">
@@ -1156,8 +1156,8 @@ function renderGanhos() {
 
 function removerGanho(id) {
   if (!confirm('Remover este ganho?')) return;
-  state.ganhos = state.ganhos.filter(g => g.id !== id);
-  save(); renderGanhos(); renderDashboard();
+  state.FATURAMENTO = state.FATURAMENTO.filter(g => g.id !== id);
+  save(); renderFATURAMENTO(); renderDashboard();
 }
 
 // ---- GASTOS ----
@@ -1250,7 +1250,7 @@ function removerGasto(id) {
 // ---- DASHBOARD ----
 // ---- EDITAR GANHO ----
 function editarGanho(id) {
-  var g = state.ganhos.find(function(x){ return x.id === id; });
+  var g = state.FATURAMENTO.find(function(x){ return x.id === id; });
   if (!g) return;
   document.getElementById('eg-id').value = id;
   document.getElementById('eg-valor').value = g.valor;
@@ -1268,17 +1268,17 @@ function closeEditGanhoModal(e) {
 }
 function salvarEditGanho() {
   var id = parseInt(document.getElementById('eg-id').value);
-  var idx = state.ganhos.findIndex(function(x){ return x.id === id; });
+  var idx = state.FATURAMENTO.findIndex(function(x){ return x.id === id; });
   if (idx === -1) return;
-  state.ganhos[idx].valor = parseFloat(document.getElementById('eg-valor').value) || state.ganhos[idx].valor;
-  state.ganhos[idx].plataforma = document.getElementById('eg-plataforma').value;
-  state.ganhos[idx].data = document.getElementById('eg-data').value;
-  state.ganhos[idx].corridas = parseInt(document.getElementById('eg-corridas').value) || 0;
-  state.ganhos[idx].horas = parseFloat(document.getElementById('eg-horas').value) || 0;
-  state.ganhos[idx].km = parseFloat(document.getElementById('eg-km').value) || 0;
-  state.ganhos[idx].obs = document.getElementById('eg-obs').value;
+  state.FATURAMENTO[idx].valor = parseFloat(document.getElementById('eg-valor').value) || state.FATURAMENTO[idx].valor;
+  state.FATURAMENTO[idx].plataforma = document.getElementById('eg-plataforma').value;
+  state.FATURAMENTO[idx].data = document.getElementById('eg-data').value;
+  state.FATURAMENTO[idx].corridas = parseInt(document.getElementById('eg-corridas').value) || 0;
+  state.FATURAMENTO[idx].horas = parseFloat(document.getElementById('eg-horas').value) || 0;
+  state.FATURAMENTO[idx].km = parseFloat(document.getElementById('eg-km').value) || 0;
+  state.FATURAMENTO[idx].obs = document.getElementById('eg-obs').value;
   document.getElementById('edit-ganho-modal').classList.remove('open');
-  save(); renderGanhos(); renderDashboard();
+  save(); renderFATURAMENTO(); renderDashboard();
 }
 
 // ---- EDITAR GASTO ----
@@ -1329,7 +1329,7 @@ function togglePainelLista() {
   painelListaExpanded = !painelListaExpanded;
   var btn = document.getElementById('painel-toggle-btn');
   if (btn) btn.textContent = painelListaExpanded ? 'Recolher' : 'Ver todos';
-  renderPainelLista(filteredGanhos(), filteredGastos());
+  renderPainelLista(filteredFATURAMENTO(), filteredGastos());
 }
 
 function renderPainelLista(fg, fe) {
@@ -1367,7 +1367,7 @@ function renderPainelLista(fg, fe) {
 }
 
 function renderDashboard() {
-  const fg = filteredGanhos();
+  const fg = filteredFATURAMENTO();
   const fe = filteredGastos();
   const totalG = fg.reduce((a,g)=>a+g.valor,0);
   const totalE = fe.reduce((a,g)=>a+g.valor,0);
@@ -1377,7 +1377,7 @@ function renderDashboard() {
   const km = fg.reduce((a,g)=>a+(g.km||0),0);
   const dias = new Set(fg.map(g=>g.data)).size;
 
-  document.getElementById('m-ganhos').textContent = fmt(totalG);
+  document.getElementById('m-FATURAMENTO').textContent = fmt(totalG);
   document.getElementById('m-gastos').textContent = fmt(totalE);
   const lEl = document.getElementById('m-liquido');
   lEl.textContent = fmt(liq);
@@ -1398,7 +1398,7 @@ function renderDashboard() {
   renderConsumoVeiculo(fg, fe);
   var btn = document.getElementById('painel-toggle-btn');
   if (btn) btn.textContent = painelListaExpanded ? 'Recolher' : 'Ver todos';
-  renderPainelLista(filteredGanhos(), filteredGastos());
+  renderPainelLista(filteredFATURAMENTO(), filteredGastos());
 }
 
 function renderWeekChart() {
@@ -1407,7 +1407,7 @@ function renderWeekChart() {
   for (let i = 6; i >= 0; i--) {
     const d = new Date(today); d.setDate(d.getDate() - i);
     const key = d.toISOString().split('T')[0];
-    const val = state.ganhos.filter(g=>g.data===key).reduce((a,g)=>a+g.valor,0);
+    const val = state.FATURAMENTO.filter(g=>g.data===key).reduce((a,g)=>a+g.valor,0);
     days.push({ label: DIAS[d.getDay()], val });
   }
   const maxVal = Math.max(...days.map(d=>d.val), 1);
@@ -1475,8 +1475,8 @@ function renderLucroDiarioChart(fg, fe) {
   const canvas = document.getElementById('lucro-diario-chart');
   if (!canvas) return;
   const porDia = {};
-  fg.forEach(g => { porDia[g.data] = porDia[g.data] || {ganhos:0, gastos:0}; porDia[g.data].ganhos += g.valor; });
-  fe.forEach(g => { porDia[g.data] = porDia[g.data] || {ganhos:0, gastos:0}; porDia[g.data].gastos += g.valor; });
+  fg.forEach(g => { porDia[g.data] = porDia[g.data] || {FATURAMENTO:0, gastos:0}; porDia[g.data].FATURAMENTO += g.valor; });
+  fe.forEach(g => { porDia[g.data] = porDia[g.data] || {FATURAMENTO:0, gastos:0}; porDia[g.data].gastos += g.valor; });
   const datas = Object.keys(porDia).sort();
   const subEl = document.getElementById('lucro-diario-sub');
 
@@ -1493,8 +1493,8 @@ function renderLucroDiarioChart(fg, fe) {
   if (subEl) subEl.textContent = datas.length + (datas.length===1?' dia':' dias');
 
   const labels = datas.map(d => fmtData(d).slice(0,5));
-  const lucros = datas.map(d => porDia[d].ganhos - porDia[d].gastos);
-  const ganhosArr = datas.map(d => porDia[d].ganhos);
+  const lucros = datas.map(d => porDia[d].FATURAMENTO - porDia[d].gastos);
+  const FATURAMENTOArr = datas.map(d => porDia[d].FATURAMENTO);
   const gastosArr = datas.map(d => porDia[d].gastos);
 
   const ctx = canvas.getContext('2d');
@@ -1531,7 +1531,7 @@ function renderLucroDiarioChart(fg, fe) {
           callbacks: {
             afterBody: ctx => {
               const i = ctx[0].dataIndex;
-              return ['Ganhos: ' + fmt(ganhosArr[i]), 'Gastos: ' + fmt(gastosArr[i])];
+              return ['FATURAMENTO: ' + fmt(FATURAMENTOArr[i]), 'Gastos: ' + fmt(gastosArr[i])];
             },
             label: ctx => 'Lucro: ' + fmt(ctx.raw)
           }
@@ -1545,7 +1545,7 @@ function renderLucroDiarioChart(fg, fe) {
   });
 }
 
-// ---- GRÁFICO: GANHOS POR PLATAFORMA ----
+// ---- GRÁFICO: FATURAMENTO POR PLATAFORMA ----
 function renderPlataformaChart(fg) {
   const canvas = document.getElementById('plataforma-chart');
   if (!canvas) return;
@@ -1606,8 +1606,8 @@ function renderLucroMesChart() {
   const canvas = document.getElementById('lucro-mes-chart');
   if (!canvas) return;
   const meses = {};
-  state.ganhos.forEach(g => { const ym = g.data.slice(0,7); meses[ym] = meses[ym] || {ganhos:0, gastos:0}; meses[ym].ganhos += g.valor; });
-  state.gastos.forEach(g => { const ym = g.data.slice(0,7); meses[ym] = meses[ym] || {ganhos:0, gastos:0}; meses[ym].gastos += g.valor; });
+  state.FATURAMENTO.forEach(g => { const ym = g.data.slice(0,7); meses[ym] = meses[ym] || {FATURAMENTO:0, gastos:0}; meses[ym].FATURAMENTO += g.valor; });
+  state.gastos.forEach(g => { const ym = g.data.slice(0,7); meses[ym] = meses[ym] || {FATURAMENTO:0, gastos:0}; meses[ym].gastos += g.valor; });
   const MESES_ABR = { '01':'Jan','02':'Fev','03':'Mar','04':'Abr','05':'Mai','06':'Jun','07':'Jul','08':'Ago','09':'Set','10':'Out','11':'Nov','12':'Dez' };
   const sorted = Object.keys(meses).sort();
 
@@ -1622,7 +1622,7 @@ function renderLucroMesChart() {
   canvas.style.display = 'block';
 
   const labels = sorted.map(ym => MESES_ABR[ym.slice(5,7)] + '/' + ym.slice(2,4));
-  const values = sorted.map(ym => meses[ym].ganhos - meses[ym].gastos);
+  const values = sorted.map(ym => meses[ym].FATURAMENTO - meses[ym].gastos);
   const colors = values.map(v => v >= 0 ? '#3fb950' : '#f85149');
 
   lucroMesChart = new Chart(canvas, {
@@ -1673,7 +1673,7 @@ function renderConsumoVeiculo(fg, fe) {
   const canvas = document.getElementById('consumo-chart');
   if (!canvas) return;
   const kmPorMes = {};
-  state.ganhos.forEach(g => { const ym = g.data.slice(0,7); kmPorMes[ym] = (kmPorMes[ym]||0) + (g.km||0); });
+  state.FATURAMENTO.forEach(g => { const ym = g.data.slice(0,7); kmPorMes[ym] = (kmPorMes[ym]||0) + (g.km||0); });
   const litrosPorMes = {};
   state.gastos.forEach(g => {
     if (g.categoria === 'gas' && g.litros) {
@@ -1743,13 +1743,13 @@ function renderConsumoVeiculo(fg, fe) {
 
 // ---- HISTÓRICO ----
 function renderHistorico() {
-  const totalG = state.ganhos.reduce((a,g)=>a+g.valor,0);
+  const totalG = state.FATURAMENTO.reduce((a,g)=>a+g.valor,0);
   const totalE = state.gastos.reduce((a,g)=>a+g.valor,0);
   const liq = totalG - totalE;
 
 
   const todas = [
-    ...state.ganhos.map(g=>({...g,tipo:'ganho'})),
+    ...state.FATURAMENTO.map(g=>({...g,tipo:'ganho'})),
     ...state.gastos.map(g=>({...g,tipo:'gasto'}))
   ].sort((a,b)=>b.data.localeCompare(a.data)||b.id-a.id);
 
@@ -1811,22 +1811,22 @@ function restaurarBackup(event) {
       return;
     }
 
-    if (!novoEstado || !Array.isArray(novoEstado.ganhos) || !Array.isArray(novoEstado.gastos)) {
+    if (!novoEstado || !Array.isArray(novoEstado.FATURAMENTO) || !Array.isArray(novoEstado.gastos)) {
       alert('Este arquivo não parece ser um backup válido do MotoristaPlus.');
       event.target.value = '';
       return;
     }
 
-    const qtdGanhos = novoEstado.ganhos.length;
+    const qtdFATURAMENTO = novoEstado.FATURAMENTO.length;
     const qtdGastos = novoEstado.gastos.length;
     const confirmar = confirm(
-      `Restaurar backup?\n\n${qtdGanhos} ganho(s) e ${qtdGastos} gasto(s) serão carregados.\n\nIsso substitui TODOS os dados atuais. Esta ação não pode ser desfeita.`
+      `Restaurar backup?\n\n${qtdFATURAMENTO} ganho(s) e ${qtdGastos} gasto(s) serão carregados.\n\nIsso substitui TODOS os dados atuais. Esta ação não pode ser desfeita.`
     );
     if (!confirmar) { event.target.value = ''; return; }
 
     state = novoEstado;
     save();
-    renderGanhos(); renderGastos(); renderHistorico(); renderDashboard();
+    renderFATURAMENTO(); renderGastos(); renderHistorico(); renderDashboard();
     alert('Backup restaurado com sucesso!');
     event.target.value = '';
   };
@@ -1840,8 +1840,8 @@ function restaurarBackup(event) {
 // ---- LIMPAR ----
 function limparTudo() {
   if (!confirm('Apagar todos os dados? Esta ação não pode ser desfeita.')) return;
-  state.ganhos = []; state.gastos = [];
-  save(); renderGanhos(); renderGastos(); renderHistorico(); renderDashboard();
+  state.FATURAMENTO = []; state.gastos = [];
+  save(); renderFATURAMENTO(); renderGastos(); renderHistorico(); renderDashboard();
 }
 
 // ---- INIT ----
@@ -1896,25 +1896,25 @@ function atualizarLabelSemana() {
   if (el) el.textContent = label;
 }
 
-function filteredGanhos() {
+function filteredFATURAMENTO() {
   const now = new Date();
   if (currentPeriod === 'tudo') {
     const ano = String(now.getFullYear());
-    return state.ganhos.filter(g => g.data.slice(0,4) === ano);
+    return state.FATURAMENTO.filter(g => g.data.slice(0,4) === ano);
   }
   if (currentPeriod === 'semana') {
     var r = getSemanaRange();
-    return state.ganhos.filter(g => g.data >= r.monStr && g.data <= r.sunStr);
+    return state.FATURAMENTO.filter(g => g.data >= r.monStr && g.data <= r.sunStr);
   }
   if (currentPeriod === 'mes') {
     var ym = (document.getElementById('filtro-mes').value || hoje().slice(0,7));
-    return state.ganhos.filter(g => g.data.slice(0,7) === ym);
+    return state.FATURAMENTO.filter(g => g.data.slice(0,7) === ym);
   }
   if (currentPeriod === 'dia') {
     var diaVal = document.getElementById('filtro-dia').value || hoje();
-    return state.ganhos.filter(g => g.data === diaVal);
+    return state.FATURAMENTO.filter(g => g.data === diaVal);
   }
-  return state.ganhos;
+  return state.FATURAMENTO;
 }
 
 function filteredGastos() {
@@ -1951,14 +1951,14 @@ function renderMonthly() {
 
   // Group by month
   const months = {};
-  state.ganhos.forEach(g => {
+  state.FATURAMENTO.forEach(g => {
     const ym = g.data.slice(0,7);
-    if (!months[ym]) months[ym] = {ganhos:0, gastos:0};
-    months[ym].ganhos += g.valor;
+    if (!months[ym]) months[ym] = {FATURAMENTO:0, gastos:0};
+    months[ym].FATURAMENTO += g.valor;
   });
   state.gastos.forEach(g => {
     const ym = g.data.slice(0,7);
-    if (!months[ym]) months[ym] = {ganhos:0, gastos:0};
+    if (!months[ym]) months[ym] = {FATURAMENTO:0, gastos:0};
     months[ym].gastos += g.valor;
   });
 
@@ -1974,14 +1974,14 @@ function renderMonthly() {
   el.innerHTML = sorted.map(function(ym) {
     var parts = ym.split('-'); var y = parts[0]; var m = parts[1];
     var d = months[ym];
-    var liq = d.ganhos - d.gastos;
+    var liq = d.FATURAMENTO - d.gastos;
     var cls = liq >= 0 ? 'green' : 'red';
     return '<div class="month-block">' +
       '<div class="month-header">' +
         '<span>' + MESES[m] + ' ' + y + '</span>' +
         '<span class="val ' + cls + '">' + fmt(liq) + ' líq.</span>' +
       '</div>' +
-      '<div class="month-row"><span>Ganhos brutos</span><span class="val green">+' + fmt(d.ganhos) + '</span></div>' +
+      '<div class="month-row"><span>FATURAMENTO brutos</span><span class="val green">+' + fmt(d.FATURAMENTO) + '</span></div>' +
       '<div class="month-row"><span>Gastos</span><span class="val red">-' + fmt(d.gastos) + '</span></div>' +
     '</div>';
   }).join('');
@@ -1994,7 +1994,7 @@ toggleEditLitrosField();
 const now = new Date();
 document.getElementById('header-date').textContent = now.toLocaleDateString('pt-BR', { weekday:'short', day:'numeric', month:'short' });
 renderDashboard();
-renderGanhos();
+renderFATURAMENTO();
 renderGastos();
 renderPonto();
 if (state.turno) iniciarTimerPonto();
