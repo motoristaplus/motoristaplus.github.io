@@ -140,8 +140,6 @@
   /* Goal bar */
   .goal-track { height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden; margin: 8px 0; }
   .goal-fill { height: 100%; border-radius: 4px; background: var(--green); transition: width 0.5s cubic-bezier(.4,0,.2,1); }
-  .goal-fill.warn { background: var(--amber); }
-  .goal-fill.danger { background: var(--red); }
   .goal-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); }
 
   /* Donut */
@@ -423,6 +421,14 @@
       </div>
 
       <div class="card">
+        <div class="card-title">
+          Meta semanal
+          <button class="btn btn-ghost" onclick="openMetaModal()">✏️ Editar</button>
+        </div>
+        <div id="goal-section"></div>
+      </div>
+
+      <div class="card">
         <div class="card-title">📈 Evolução do Lucro Diário <span id="lucro-diario-sub"></span></div>
         <div class="chart-wrap h-180">
           <canvas id="lucro-diario-chart"></canvas>
@@ -434,14 +440,6 @@
         <div class="chart-wrap h-180">
           <canvas id="plataforma-chart"></canvas>
         </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">
-          Meta semanal
-          <button class="btn btn-ghost" onclick="openMetaModal()">✏️ Editar</button>
-        </div>
-        <div id="goal-section"></div>
       </div>
 
       <div class="card">
@@ -1092,13 +1090,11 @@ const PLATAFORMAS = ['Uber','99','InDriver','Cabify','Outra'];
 const PLAT_COLORS = { 'Uber':'#3fb950', '99':'#58a6ff', 'InDriver':'#d29922', 'Cabify':'#a371f7', 'Outra':'#8b949e' };
 
 function formatarHorasLegivel(decimal) {
-  if (!decimal) return '0h';
+  if (!decimal) return '0:00';
   const totalMin = Math.round(decimal * 60);
   const h = Math.floor(totalMin / 60);
   const m = totalMin % 60;
-  if (h === 0) return m + 'min';
-  if (m === 0) return h + 'h';
-  return h + 'h' + String(m).padStart(2, '0');
+  return h + ':' + String(m).padStart(2, '0');
 }
 
 function hoje() { return new Date().toISOString().split('T')[0]; }
@@ -1637,7 +1633,7 @@ function renderWeekChart() {
         <div class="bar ${d.val>0?'filled':'empty'}" style="height:${Math.round((d.val/maxVal)*100)}%"></div>
       </div>
       <div class="day-lbl">${d.label}</div>
-      <div class="day-val">${d.val>0?fmtShort(d.val):'-'}</div>
+      <div class="day-val">${d.val>0?fmt(d.val):'-'}</div>
     </div>`).join('');
 }
 
@@ -1651,13 +1647,12 @@ function renderGoal(totalG) {
     return;
   }
   const pct = Math.min(100, Math.round((totalG/state.meta)*100));
-  const cls = pct >= 80 ? '' : pct >= 40 ? 'warn' : 'danger';
   const falta = state.meta - totalG;
   document.getElementById('goal-section').innerHTML = `
     <div class="goal-info" style="margin-bottom:4px;">
       <span>${fmt(totalG)}</span><span>Meta: ${fmt(state.meta)}</span>
     </div>
-    <div class="goal-track"><div class="goal-fill ${cls}" style="width:${pct}%"></div></div>
+    <div class="goal-track"><div class="goal-fill" style="width:${pct}%"></div></div>
     <div class="goal-info">
       <span style="color:${pct>=100?'var(--green)':'var(--text2)'}; font-weight:${pct>=100?'500':'400'}">
         ${pct>=100?'🎯 Meta atingida!':'Faltam '+fmt(falta)}
@@ -1767,7 +1762,7 @@ function renderLucroDiarioChart(fg, fe) {
       },
       scales: {
         x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 } },
-        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font: { size: 10 }, callback: v => fmtShort(v) } }
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font: { size: 10 }, callback: v => fmt(v) } }
       }
     }
   });
@@ -1817,12 +1812,12 @@ function renderPlataformaChart(fg) {
         },
         datalabels: {
           display: true, anchor: 'end', align: 'end', color: '#e6edf3', font: { size: 10, weight: '600' },
-          formatter: v => v > 0 ? fmtShort(v) + ' · ' + Math.round(v/total*100) + '%' : ''
+          formatter: v => v > 0 ? fmt(v) + ' · ' + Math.round(v/total*100) + '%' : ''
         }
       },
       layout: { padding: { right: 46 } },
       scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font: { size: 10 }, callback: v => fmtShort(v) } },
+        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font: { size: 10 }, callback: v => fmt(v) } },
         y: { grid: { display: false }, ticks: { color: '#e6edf3', font: { size: 11 } } }
       }
     }
@@ -1870,7 +1865,7 @@ function renderLucroMesChart() {
       },
       scales: {
         x: { grid: { display: false }, ticks: { color: '#8b949e', font: { size: 10 } } },
-        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font: { size: 10 }, callback: v => fmtShort(v) } }
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font: { size: 10 }, callback: v => fmt(v) } }
       }
     }
   });
