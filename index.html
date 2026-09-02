@@ -270,6 +270,7 @@
     <button class="menu-item" onclick="abrirPerfil()"><span class="menu-item-icon">👤</span>Meu Perfil</button>
     <button class="menu-item" onclick="switchTab('historico'); fecharMenu();"><span class="menu-item-icon">📋</span>Histórico</button>
     <button class="menu-item" onclick="switchTab('contas'); fecharMenu();"><span class="menu-item-icon">🧾</span>Contas a Pagar</button>
+    <button class="menu-item" onclick="switchTab('manutencao'); fecharMenu();"><span class="menu-item-icon">🔧</span>Manutenção do Carro</button>
   </div>
 </div>
 
@@ -340,12 +341,12 @@
         <button class="btn btn-ghost" onclick="sair()">Sair</button>
       </div>
     </div>
-    <div style="margin-top:10px;">
+    <div style="margin-top:10px;" id="ponto-btn-wrap">
       <button class="btn btn-green" id="ponto-btn" onclick="baterPonto()">▶️ Bater ponto (início)</button>
     </div>
   </div>
 
-  <div class="tabs">
+  <div class="tabs" id="tabs-bar">
     <button class="tab active" onclick="switchTab('dashboard')">
       <span class="tab-icon">📊</span>Painel
     </button>
@@ -635,7 +636,7 @@
 
     <!-- HISTÓRICO -->
     <div id="tab-historico" class="section">
-
+      <button class="btn btn-ghost" style="margin-bottom:12px;" onclick="switchTab('dashboard')">← Voltar ao Painel</button>
 
       <div class="card">
         <div class="card-title">
@@ -672,6 +673,7 @@
 
     <!-- CONTAS A PAGAR -->
     <div id="tab-contas" class="section">
+      <button class="btn btn-ghost" style="margin-bottom:12px;" onclick="switchTab('dashboard')">← Voltar ao Painel</button>
       <div class="card">
         <div class="card-title">Pendente</div>
         <div class="metrics">
@@ -721,6 +723,11 @@
 
       <div class="card">
         <div class="card-title">Contas registradas <span id="count-contas">0</span></div>
+        <div style="margin-bottom:10px;">
+          <select class="form-select" id="filtro-contas-mes" onchange="renderContas()" style="width:100%;">
+            <option value="">Todos os meses</option>
+          </select>
+        </div>
         <div id="lista-contas"><div class="empty"><div class="empty-icon">🧾</div>Nenhuma conta registrada ainda.</div></div>
       </div>
     </div>
@@ -1446,6 +1453,9 @@ function switchTab(t) {
   document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
   document.getElementById('content').scrollTop = 0;
+  const ocultarNavegacao = (t === 'contas' || t === 'historico' || t === 'manutencao');
+  document.getElementById('tabs-bar').style.display = ocultarNavegacao ? 'none' : 'flex';
+  document.getElementById('ponto-btn-wrap').style.display = ocultarNavegacao ? 'none' : 'block';
   if (t==='dashboard') renderDashboard();
   if (t==='historico') renderHistorico();
   if (t==='ganhos') atualizarBotaoHorasHoje();
@@ -1747,11 +1757,18 @@ function salvarMultiplicador() {
 }
 
 function renderContas() {
-  const lista = state.contas || [];
+  const todas = state.contas || [];
   document.getElementById('c-multiplicador').value = (state.multiplicadorConta != null ? state.multiplicadorConta : 33);
-  document.getElementById('count-contas').textContent = lista.length;
+  document.getElementById('count-contas').textContent = todas.length;
+
+  const mesesSet = new Set(todas.map(function(c){ return c.vencimento && c.vencimento.slice(0,7); }).filter(Boolean));
+  const meses = Array.from(mesesSet).sort();
+  popularSeletorMeses('filtro-contas-mes', meses, true);
+  const mesSel = document.getElementById('filtro-contas-mes').value;
+  const lista = mesSel ? todas.filter(function(c){ return (c.vencimento||'').slice(0,7) === mesSel; }) : todas;
 
   const pendentes = lista.filter(function(c){ return c.status !== 'pago'; });
+  const pagas = lista.filter(function(c){ return c.status === 'pago'; });
   const totalReal = pendentes.reduce(function(a,c){ return a + c.valor; }, 0);
   const totalUber = pendentes.reduce(function(a,c){ return a + valorUber(c.valor); }, 0);
   document.getElementById('contas-total-real').textContent = fmt(totalReal);
@@ -1759,16 +1776,16 @@ function renderContas() {
 
   const el = document.getElementById('lista-contas');
   if (!lista.length) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">🧾</div>Nenhuma conta registrada ainda.</div>';
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🧾</div>Nenhuma conta neste período.</div>';
     return;
   }
-  const ordenada = [...lista].sort(function(a,b){ return (a.vencimento||'').localeCompare(b.vencimento||''); });
-  el.innerHTML = ordenada.map(function(c) {
+
+  function linhaConta(c) {
     const pago = c.status === 'pago';
     return '<div class="list-item" style="' + (pago ? 'opacity:0.55;' : '') + '">' +
       '<div class="item-icon ' + (pago ? 'earn' : 'spend') + '" style="cursor:pointer;" onclick="togglePagoConta(' + c.id + ')">' + (pago ? '✅' : '🧾') + '</div>' +
       '<div class="item-body" onclick="editarConta(' + c.id + ')" style="cursor:pointer;">' +
-        '<div class="item-name">' + c.nome + (pago ? ' <span style="font-size:11px; color:var(--green);">(pago)</span>' : '') + '</div>' +
+        '<div class="item-name">' + c.nome + '</div>' +
         '<div class="item-meta">Vence ' + fmtData(c.vencimento) + (c.banco ? ' · ' + c.banco : '') + '</div>' +
         (pago ? '' : '<div style="font-size:12px; color:var(--gold); margin-top:2px;">Preciso faturar: ' + fmt(valorUber(c.valor)) + '</div>') +
       '</div>' +
@@ -1777,7 +1794,17 @@ function renderContas() {
         '<button class="item-del" onclick="removerConta(' + c.id + ')">✕</button>' +
       '</div>' +
     '</div>';
-  }).join('');
+  }
+
+  const pendentesOrdenadas = [...pendentes].sort(function(a,b){ return (a.vencimento||'').localeCompare(b.vencimento||''); });
+  const pagasOrdenadas = [...pagas].sort(function(a,b){ return (b.vencimento||'').localeCompare(a.vencimento||''); });
+
+  let html = '';
+  html += '<div style="font-size:12px; font-weight:600; color:var(--red); margin-bottom:6px;">🔴 PENDENTES (' + pendentesOrdenadas.length + ')</div>';
+  html += pendentesOrdenadas.length ? pendentesOrdenadas.map(linhaConta).join('') : '<div class="empty" style="padding:14px 0;">Nenhuma conta pendente. 🎉</div>';
+  html += '<div style="font-size:12px; font-weight:600; color:var(--green); margin:16px 0 6px;">✅ PAGAS (' + pagasOrdenadas.length + ')</div>';
+  html += pagasOrdenadas.length ? pagasOrdenadas.map(linhaConta).join('') : '<div class="empty" style="padding:14px 0;">Nenhuma conta paga ainda neste período.</div>';
+  el.innerHTML = html;
 }
 
 var painelListaExpanded = false;
