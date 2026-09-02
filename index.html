@@ -267,7 +267,7 @@
       <span class="tab-icon">📊</span>Painel
     </button>
     <button class="tab" onclick="switchTab('ganhos')">
-      <span class="tab-icon">💰</span>GANHOS
+      <span class="tab-icon">💰</span>Faturamento
     </button>
     <button class="tab" onclick="switchTab('gastos')">
       <span class="tab-icon">🔴</span>Gastos
@@ -316,7 +316,7 @@
 
       <div class="metrics">
         <div class="metric">
-          <div class="metric-label">GANHOS</div>
+          <div class="metric-label">Faturamento</div>
           <div class="metric-value green" id="m-ganhos">R$ 0</div>
         </div>
         <div class="metric">
@@ -335,7 +335,7 @@
           <div class="metric-label">Horas</div>
           <div class="metric-value" id="m-horas">0h</div>
         </div>
-        <div class="metric">
+        <div class="metric" id="metric-dias-wrap">
           <div class="metric-label">Dias trab.</div>
           <div class="metric-value" id="m-dias">0</div>
         </div>
@@ -350,7 +350,7 @@
       </div>
 
       <div class="card">
-        <div class="card-title">Ganhos — últimos 7 dias</div>
+        <div class="card-title">Ganho Semanal</div>
         <div class="week-chart" id="week-chart"></div>
       </div>
 
@@ -362,7 +362,7 @@
       </div>
 
       <div class="card">
-        <div class="card-title">🚗 GANHOS por Plataforma <span id="plataforma-sub"></span></div>
+        <div class="card-title">🚗 Faturamento por Plataforma <span id="plataforma-sub"></span></div>
         <div class="chart-wrap h-180">
           <canvas id="plataforma-chart"></canvas>
         </div>
@@ -394,7 +394,7 @@
         </div>
       </div>
       <div class="card" id="monthly-card">
-        <div class="card-title">GANHOS por mês</div>
+        <div class="card-title">Faturamento por mês</div>
         <div id="monthly-breakdown"></div>
       </div>
 
@@ -439,7 +439,7 @@
     <!-- GANHOS -->
     <div id="tab-ganhos" class="section">
       <div class="card">
-        <div class="card-title">Registrar GANHOS</div>
+        <div class="card-title">Registrar faturamento</div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Valor (R$)</label>
@@ -488,8 +488,8 @@
       </div>
 
       <div class="card">
-        <div class="card-title">GANHOS registrado <span id="count-ganhos">0</span></div>
-        <div id="lista-ganhos"><div class="empty"><div class="empty-icon">💰</div>Nenhum GANHOS registrado ainda.</div></div>
+        <div class="card-title">Faturamento registrado <span id="count-ganhos">0</span></div>
+        <div id="lista-ganhos"><div class="empty"><div class="empty-icon">💰</div>Nenhum faturamento registrado ainda.</div></div>
       </div>
     </div>
 
@@ -602,7 +602,7 @@
 <!-- Modal editar ganho -->
 <div class="modal-overlay" id="edit-ganho-modal" onclick="closeEditGanhoModal(event)">
   <div class="modal">
-    <div class="modal-title">✏️ Editar GANHOS</div>
+    <div class="modal-title">✏️ Editar faturamento</div>
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Valor (R$)</label>
@@ -933,6 +933,30 @@ function fmt(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFrac
 function fmtShort(v) { return Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
 function fmtData(d) { if (!d) return ''; const p = d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
 
+const MESES_NOME = { '01':'Janeiro','02':'Fevereiro','03':'Março','04':'Abril','05':'Maio','06':'Junho','07':'Julho','08':'Agosto','09':'Setembro','10':'Outubro','11':'Novembro','12':'Dezembro' };
+
+function mesesUnicos(lista) {
+  const set = new Set(lista.map(x => x.data && x.data.slice(0,7)).filter(Boolean));
+  return Array.from(set).sort();
+}
+
+function popularSeletorMeses(selectId, meses, comTodos) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  const valorAtual = sel.value;
+  let html = comTodos ? '<option value="">Todos os meses</option>' : '';
+  html += meses.map(ym => {
+    const ano = ym.slice(0,4), mes = ym.slice(5,7);
+    return '<option value="' + ym + '">' + MESES_NOME[mes] + ' ' + ano + '</option>';
+  }).join('');
+  sel.innerHTML = html;
+  if (meses.indexOf(valorAtual) !== -1 || (comTodos && valorAtual === '')) {
+    sel.value = valorAtual;
+  } else if (meses.length) {
+    sel.value = meses[meses.length - 1];
+  }
+}
+
 // ---- BATER PONTO ----
 let pontoInterval = null;
 
@@ -1128,7 +1152,7 @@ function baterPonto() {
     renderPonto();
     atualizarBotaoHorasHoje();
     renderTempoOn();
-    alert('Turno encerrado!\nEsse turno: ' + horasFmt + '\nTotal pendente de lançar: ' + totalPendenteFmt + '\n\nQuando for lançar o GANHOS, use o botão "Usar últimas marcações" no formulário de GANHOS.');
+    alert('Turno encerrado!\nEsse turno: ' + horasFmt + '\nTotal pendente de lançar: ' + totalPendenteFmt + '\n\nQuando for lançar o faturamento, use o botão "Usar últimas marcações" no formulário de Faturamento.');
   }
 }
 
@@ -1173,7 +1197,7 @@ function adicionarGanho() {
 function renderGanhos() {
   const el = document.getElementById('lista-ganhos');
   document.getElementById('count-ganhos').textContent = state.ganhos.length;
-  if (!state.ganhos.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">💰</div>Nenhum GANHOS registrado ainda.</div>'; return; }
+  if (!state.ganhos.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">💰</div>Nenhum faturamento registrado ainda.</div>'; return; }
   el.innerHTML = [...state.ganhos].reverse().map(g => `
     <div class="list-item">
       <div class="item-icon earn">🚗</div>
@@ -1190,7 +1214,7 @@ function renderGanhos() {
 }
 
 function removerGanho(id) {
-  if (!confirm('Remover este GANHOS?')) return;
+  if (!confirm('Remover este faturamento?')) return;
   state.ganhos = state.ganhos.filter(g => g.id !== id);
   save(); renderGanhos(); renderDashboard();
 }
@@ -1249,6 +1273,7 @@ function adicionarGasto() {
 }
 
 function renderGastos() {
+  popularSeletorMeses('filtro-gastos-mes', mesesUnicos(state.gastos), true);
   const el = document.getElementById('lista-gastos');
   const filtroMes = document.getElementById('filtro-gastos-mes');
   const mesSel = filtroMes ? filtroMes.value : '';
@@ -1402,6 +1427,7 @@ function renderPainelLista(fg, fe) {
 }
 
 function renderDashboard() {
+  popularSeletorMeses('filtro-mes', mesesUnicos([...state.ganhos, ...state.gastos]), false);
   const fg = filteredGanhos();
   const fe = filteredGastos();
   const totalG = fg.reduce((a,g)=>a+g.valor,0);
@@ -1438,9 +1464,12 @@ function renderDashboard() {
 
 function renderWeekChart() {
   const today = new Date();
+  const diaSemana = (today.getDay() + 6) % 7; // 0 = segunda-feira
+  const segunda = new Date(today);
+  segunda.setDate(today.getDate() - diaSemana);
   const days = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(today); d.setDate(d.getDate() - i);
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(segunda); d.setDate(segunda.getDate() + i);
     const key = d.toISOString().split('T')[0];
     const val = state.ganhos.filter(g=>g.data===key).reduce((a,g)=>a+g.valor,0);
     days.push({ label: DIAS[d.getDay()], val });
@@ -1574,7 +1603,7 @@ function renderLucroDiarioChart(fg, fe) {
           callbacks: {
             afterBody: ctx => {
               const i = ctx[0].dataIndex;
-              return ['GANHOS: ' + fmt(ganhosArr[i]), 'Gastos: ' + fmt(gastosArr[i])];
+              return ['Faturamento: ' + fmt(ganhosArr[i]), 'Gastos: ' + fmt(gastosArr[i])];
             },
             label: ctx => 'Lucro: ' + fmt(ctx.raw)
           }
@@ -1612,7 +1641,7 @@ function renderPlataformaChart(fg) {
 
   if (total <= 0) {
     canvas.style.display = 'none';
-    canvas.parentElement.insertAdjacentHTML('beforeend', '<div class="chart-empty">Nenhum GANHOS no período.</div>');
+    canvas.parentElement.insertAdjacentHTML('beforeend', '<div class="chart-empty">Nenhum faturamento no período.</div>');
     return;
   }
   canvas.style.display = 'block';
@@ -1900,6 +1929,7 @@ function setPeriod(p) {
   document.getElementById('dia-picker').style.display = p === 'dia' ? 'block' : 'none';
   document.getElementById('mes-picker').style.display = p === 'mes' ? 'block' : 'none';
   document.getElementById('semana-picker').style.display = p === 'semana' ? 'block' : 'none';
+  document.getElementById('metric-dias-wrap').style.display = p === 'dia' ? 'none' : '';
 
   if (p === 'dia' && !document.getElementById('filtro-dia').value) {
     document.getElementById('filtro-dia').value = hoje();
@@ -2024,7 +2054,7 @@ function renderMonthly() {
         '<span>' + MESES[m] + ' ' + y + '</span>' +
         '<span class="val ' + cls + '">' + fmt(liq) + ' líq.</span>' +
       '</div>' +
-      '<div class="month-row"><span>GANHOS bruto</span><span class="val green">+' + fmt(d.ganhos) + '</span></div>' +
+      '<div class="month-row"><span>Faturamento bruto</span><span class="val green">+' + fmt(d.ganhos) + '</span></div>' +
       '<div class="month-row"><span>Gastos</span><span class="val red">-' + fmt(d.gastos) + '</span></div>' +
     '</div>';
   }).join('');
