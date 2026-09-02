@@ -269,6 +269,7 @@
     </div>
     <button class="menu-item" onclick="abrirPerfil()"><span class="menu-item-icon">👤</span>Meu Perfil</button>
     <button class="menu-item" onclick="switchTab('historico'); fecharMenu();"><span class="menu-item-icon">📋</span>Histórico</button>
+    <button class="menu-item" onclick="switchTab('contas'); fecharMenu();"><span class="menu-item-icon">🧾</span>Contas a Pagar</button>
   </div>
 </div>
 
@@ -276,34 +277,47 @@
 <div class="modal-overlay" id="perfil-modal" onclick="closePerfilModal(event)">
   <div class="modal">
     <div class="modal-title">👤 Meu Perfil</div>
+
     <div class="form-group">
-      <label class="form-label">E-mail atual</label>
-      <input class="form-input" type="text" id="perfil-email-atual" disabled>
+      <label class="form-label">E-mail</label>
+      <div style="background:var(--bg3); border:1px solid var(--border2); border-radius:var(--radius-sm); padding:12px 14px; color:var(--text2); font-size:14px;" id="perfil-email-caixa"></div>
     </div>
-    <div id="perfil-google-aviso" style="display:none; font-size:13px; color:var(--text2); background:var(--bg3); border-radius:var(--radius-sm); padding:12px; margin-top:8px;">
-      Sua conta usa login do Google. E-mail e senha são gerenciados pela sua conta Google, não é possível alterá-los por aqui.
+
+    <div id="perfil-google-aviso" style="display:none; font-size:13px; color:var(--text2); background:var(--bg3); border-radius:var(--radius-sm); padding:12px; margin-bottom:14px;">
+      Sua conta usa login do Google. Senha é gerenciada pela sua conta Google, não é possível alterá-la por aqui.
     </div>
-    <div id="perfil-campos-senha">
-      <div class="form-group" style="margin-top:14px;">
-        <label class="form-label">Senha atual (confirme pra alterar)</label>
+
+    <div class="form-group" id="perfil-senha-linha">
+      <label class="form-label">Senha</label>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--bg3); border:1px solid var(--border2); border-radius:var(--radius-sm); padding:12px 14px;">
+        <span style="color:var(--text2); font-size:16px; letter-spacing:2px;">••••••••</span>
+        <a href="#" onclick="abrirTrocaSenha(); return false;" style="color:var(--accent); font-size:13px; text-decoration:underline; flex-shrink:0;">alterar senha</a>
+      </div>
+    </div>
+
+    <div id="perfil-campos-senha" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">Senha atual</label>
         <input class="form-input" type="password" id="perfil-senha-atual" placeholder="Sua senha atual" autocomplete="current-password">
       </div>
       <div class="form-group">
-        <label class="form-label">Novo e-mail (opcional)</label>
-        <input class="form-input" type="email" id="perfil-novo-email" placeholder="Deixe em branco pra não alterar">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Nova senha (opcional)</label>
+        <label class="form-label">Nova senha</label>
         <input class="form-input" type="password" id="perfil-nova-senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
       </div>
       <div class="form-group">
         <label class="form-label">Confirmar nova senha</label>
         <input class="form-input" type="password" id="perfil-nova-senha-confirmar" placeholder="Repita a nova senha" autocomplete="new-password">
       </div>
-      <div id="perfil-erro" style="color:var(--red); font-size:12px; margin-bottom:10px; display:none;"></div>
-      <div id="perfil-sucesso" style="color:var(--green); font-size:12px; margin-bottom:10px; display:none;"></div>
-      <button class="btn btn-green" onclick="salvarPerfil()">Salvar alterações</button>
     </div>
+
+    <div class="form-group">
+      <label class="form-label">Telefone (opcional)</label>
+      <input class="form-input" type="tel" id="perfil-telefone" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric" oninput="mascararTelefone(this)">
+    </div>
+
+    <div id="perfil-erro" style="color:var(--red); font-size:12px; margin-bottom:10px; display:none;"></div>
+    <div id="perfil-sucesso" style="color:var(--green); font-size:12px; margin-bottom:10px; display:none;"></div>
+    <button class="btn btn-green" onclick="salvarPerfil()">Salvar alterações</button>
     <button class="btn btn-ghost" style="margin-top:10px;" onclick="closePerfilModal()">Fechar</button>
   </div>
 </div>
@@ -656,6 +670,61 @@
       </div>
     </div>
 
+    <!-- CONTAS A PAGAR -->
+    <div id="tab-contas" class="section">
+      <div class="card">
+        <div class="card-title">Pendente</div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Valor real</div>
+            <div class="metric-value red" id="contas-total-real">R$ 0,00</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Preciso faturar</div>
+            <div class="metric-value" id="contas-total-uber" style="color:var(--gold);">R$ 0,00</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🧾 Nova conta</div>
+        <div class="form-group">
+          <label class="form-label">Nome da conta</label>
+          <input class="form-input" type="text" id="c-nome" placeholder="Ex: Aluguel, Condomínio, Cartão...">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Valor (R$)</label>
+            <input class="form-input" type="number" id="c-valor" placeholder="0,00" min="0" step="0.01" inputmode="decimal">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vencimento</label>
+            <input class="form-input" type="date" id="c-vencimento">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Banco / forma de pagamento (opcional)</label>
+          <input class="form-input" type="text" id="c-banco" placeholder="Ex: Nubank, Santander, Boleto...">
+        </div>
+        <button class="btn btn-red" onclick="adicionarConta()">🧾 &nbsp;Adicionar conta</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="display:flex; align-items:center; justify-content:space-between;">
+          <span>Margem de combustível</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <input class="form-input" type="number" id="c-multiplicador" min="0" step="1" inputmode="numeric" style="width:90px;" value="33" onchange="salvarMultiplicador()">
+          <span style="color:var(--text2); font-size:13px;">% a mais sobre o valor real = quanto preciso faturar pra cobrir a conta</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Contas registradas <span id="count-contas">0</span></div>
+        <div id="lista-contas"><div class="empty"><div class="empty-icon">🧾</div>Nenhuma conta registrada ainda.</div></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -756,6 +825,36 @@
   </div>
 </div>
 
+<!-- Modal editar conta -->
+<div class="modal-overlay" id="edit-conta-modal" onclick="closeEditContaModal(event)">
+  <div class="modal">
+    <div class="modal-title">✏️ Editar conta</div>
+    <div class="form-group">
+      <label class="form-label">Nome da conta</label>
+      <input class="form-input" type="text" id="ec-nome">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Valor (R$)</label>
+        <input class="form-input" type="number" id="ec-valor" min="0" step="0.01" inputmode="decimal">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Vencimento</label>
+        <input class="form-input" type="date" id="ec-vencimento">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Banco / forma de pagamento</label>
+      <input class="form-input" type="text" id="ec-banco">
+    </div>
+    <input type="hidden" id="ec-id">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;">
+      <button class="btn" onclick="closeEditContaModal()">Cancelar</button>
+      <button class="btn btn-red" onclick="salvarEditConta()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal meta -->
 <div class="modal-overlay" id="meta-modal" onclick="closeMetaModal(event)">
   <div class="modal">
@@ -796,7 +895,10 @@ const DEFAULT_STATE = {
   gastos: [],
   turno: null,
   turnosHistorico: [],
-  ultimoValorPorCategoria: {}
+  ultimoValorPorCategoria: {},
+  telefone: '',
+  contas: [],
+  multiplicadorConta: 33
 };
 let state = null;
 
@@ -910,17 +1012,34 @@ function ehContaGoogle() {
 
 function abrirPerfil() {
   fecharMenu();
-  document.getElementById('perfil-email-atual').value = currentUser ? (currentUser.email || '') : '';
+  document.getElementById('perfil-email-caixa').textContent = currentUser ? (currentUser.email || '') : '';
+  document.getElementById('perfil-telefone').value = (state && state.telefone) || '';
   document.getElementById('perfil-erro').style.display = 'none';
   document.getElementById('perfil-sucesso').style.display = 'none';
-  document.getElementById('perfil-senha-atual').value = '';
-  document.getElementById('perfil-novo-email').value = '';
-  document.getElementById('perfil-nova-senha').value = '';
-  document.getElementById('perfil-nova-senha-confirmar').value = '';
+  fecharTrocaSenha();
   const google = ehContaGoogle();
   document.getElementById('perfil-google-aviso').style.display = google ? 'block' : 'none';
-  document.getElementById('perfil-campos-senha').style.display = google ? 'none' : 'block';
+  document.getElementById('perfil-senha-linha').style.display = google ? 'none' : 'block';
   document.getElementById('perfil-modal').classList.add('open');
+}
+
+function abrirTrocaSenha() {
+  document.getElementById('perfil-campos-senha').style.display = 'block';
+}
+
+function fecharTrocaSenha() {
+  document.getElementById('perfil-campos-senha').style.display = 'none';
+  document.getElementById('perfil-senha-atual').value = '';
+  document.getElementById('perfil-nova-senha').value = '';
+  document.getElementById('perfil-nova-senha-confirmar').value = '';
+}
+
+function mascararTelefone(el) {
+  let v = el.value.replace(/\D/g, '').slice(0, 11);
+  if (v.length > 6) { el.value = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7); }
+  else if (v.length > 2) { el.value = '(' + v.slice(0,2) + ') ' + v.slice(2); }
+  else if (v.length > 0) { el.value = '(' + v; }
+  else { el.value = ''; }
 }
 
 function closePerfilModal(e) {
@@ -943,34 +1062,36 @@ function mostrarSucessoPerfil(msg) {
 }
 
 function salvarPerfil() {
+  document.getElementById('perfil-erro').style.display = 'none';
+  document.getElementById('perfil-sucesso').style.display = 'none';
+
+  const telefone = document.getElementById('perfil-telefone').value.trim();
+  if (state && telefone !== (state.telefone || '')) {
+    state.telefone = telefone;
+    save();
+  }
+
+  const trocandoSenha = document.getElementById('perfil-campos-senha').style.display !== 'none';
+  if (!trocandoSenha) {
+    mostrarSucessoPerfil('Dados atualizados com sucesso!');
+    return;
+  }
+
   const senhaAtual = document.getElementById('perfil-senha-atual').value;
-  const novoEmail = document.getElementById('perfil-novo-email').value.trim();
   const novaSenha = document.getElementById('perfil-nova-senha').value;
   const novaSenhaConfirmar = document.getElementById('perfil-nova-senha-confirmar').value;
 
   if (!senhaAtual) { mostrarErroPerfil('Digite sua senha atual pra confirmar a alteração.'); return; }
-  if (!novoEmail && !novaSenha) { mostrarErroPerfil('Preencha um novo e-mail ou uma nova senha pra alterar.'); return; }
-  if (novaSenha && novaSenha !== novaSenhaConfirmar) { mostrarErroPerfil('As senhas novas não são iguais.'); return; }
-  if (novaSenha && novaSenha.length < 6) { mostrarErroPerfil('A nova senha precisa ter no mínimo 6 caracteres.'); return; }
+  if (!novaSenha) { mostrarErroPerfil('Digite a nova senha.'); return; }
+  if (novaSenha !== novaSenhaConfirmar) { mostrarErroPerfil('As senhas novas não são iguais.'); return; }
+  if (novaSenha.length < 6) { mostrarErroPerfil('A nova senha precisa ter no mínimo 6 caracteres.'); return; }
 
   const credential = firebase.auth.EmailAuthProvider.credential(currentUser.email, senhaAtual);
   currentUser.reauthenticateWithCredential(credential).then(function () {
-    const tarefas = [];
-    if (novoEmail && novoEmail !== currentUser.email) {
-      tarefas.push(currentUser.updateEmail(novoEmail));
-    }
-    if (novaSenha) {
-      tarefas.push(currentUser.updatePassword(novaSenha));
-    }
-    return Promise.all(tarefas);
+    return currentUser.updatePassword(novaSenha);
   }).then(function () {
     mostrarSucessoPerfil('Dados atualizados com sucesso!');
-    document.getElementById('menu-user-email').textContent = currentUser.email || '';
-    document.getElementById('perfil-email-atual').value = currentUser.email || '';
-    document.getElementById('perfil-senha-atual').value = '';
-    document.getElementById('perfil-novo-email').value = '';
-    document.getElementById('perfil-nova-senha').value = '';
-    document.getElementById('perfil-nova-senha-confirmar').value = '';
+    fecharTrocaSenha();
   }).catch(function (err) {
     mostrarErroPerfil(traduzErroAuth(err));
   });
@@ -1051,12 +1172,24 @@ function conectarDadosNuvem() {
       if (!state.gastos) state.gastos = [];
       if (!state.turnosHistorico) state.turnosHistorico = [];
       if (!state.ultimoValorPorCategoria) state.ultimoValorPorCategoria = {};
+      if (state.telefone === undefined) state.telefone = '';
+      if (!state.contas) state.contas = [];
+      if (state.multiplicadorConta === undefined) state.multiplicadorConta = 33;
+      iniciarApp();
+      carregandoRemoto = false;
     } else {
-      state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-      ref.set(state);
+      carregandoRemoto = false;
+      const confirmar = confirm('Nenhum dado foi encontrado nesta conta.\n\nSe você já tinha informações salvas antes, isso pode ser uma falha de conexão — toque "Cancelar" e tente abrir o app de novo em vez de começar do zero.\n\nToque "OK" SOMENTE se esta for realmente uma conta nova, sem nenhum lançamento anterior.');
+      if (confirmar) {
+        carregandoRemoto = true;
+        state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+        ref.set(state);
+        iniciarApp();
+        carregandoRemoto = false;
+      } else {
+        alert('Nada foi apagado. Feche o app e abra de novo — se o problema persistir, verifique sua conexão com a internet.');
+      }
     }
-    iniciarApp();
-    carregandoRemoto = false;
   }, function (err) {
     alert('Erro ao sincronizar com a nuvem: ' + err.message);
   });
@@ -1317,6 +1450,7 @@ function switchTab(t) {
   if (t==='historico') renderHistorico();
   if (t==='ganhos') atualizarBotaoHorasHoje();
   if (t==='tempoon') renderTempoOn();
+  if (t==='contas') renderContas();
 }
 
 // ---- GANHOS ----
@@ -1534,6 +1668,116 @@ function salvarEditGasto() {
   }
   document.getElementById('edit-gasto-modal').classList.remove('open');
   save(); renderGastos(); renderDashboard();
+}
+
+// ---- CONTAS A PAGAR ----
+function valorUber(valorReal) {
+  const mult = 1 + ((state.multiplicadorConta != null ? state.multiplicadorConta : 33) / 100);
+  return valorReal * mult;
+}
+
+function adicionarConta() {
+  const nome = document.getElementById('c-nome').value.trim();
+  const v = parseFloat(document.getElementById('c-valor').value);
+  const venc = document.getElementById('c-vencimento').value;
+  if (!nome) { alert('Digite o nome da conta.'); return; }
+  if (!v || v <= 0) { alert('Informe um valor válido.'); return; }
+  if (!venc) { alert('Informe a data de vencimento.'); return; }
+  if (!state.contas) state.contas = [];
+  state.contas.push({
+    id: Date.now(),
+    nome: nome,
+    valor: v,
+    vencimento: venc,
+    banco: document.getElementById('c-banco').value.trim(),
+    status: 'pendente'
+  });
+  document.getElementById('c-nome').value = '';
+  document.getElementById('c-valor').value = '';
+  document.getElementById('c-vencimento').value = '';
+  document.getElementById('c-banco').value = '';
+  save(); renderContas();
+}
+
+function togglePagoConta(id) {
+  const c = state.contas.find(function(x){ return x.id === id; });
+  if (!c) return;
+  c.status = c.status === 'pago' ? 'pendente' : 'pago';
+  save(); renderContas();
+}
+
+function removerConta(id) {
+  if (!confirm('Remover esta conta?')) return;
+  state.contas = state.contas.filter(function(x){ return x.id !== id; });
+  save(); renderContas();
+}
+
+function editarConta(id) {
+  const c = state.contas.find(function(x){ return x.id === id; });
+  if (!c) return;
+  document.getElementById('ec-id').value = id;
+  document.getElementById('ec-nome').value = c.nome;
+  document.getElementById('ec-valor').value = c.valor;
+  document.getElementById('ec-vencimento').value = c.vencimento;
+  document.getElementById('ec-banco').value = c.banco || '';
+  document.getElementById('edit-conta-modal').classList.add('open');
+}
+
+function closeEditContaModal(e) {
+  if (!e || e.target === document.getElementById('edit-conta-modal'))
+    document.getElementById('edit-conta-modal').classList.remove('open');
+}
+
+function salvarEditConta() {
+  const id = parseInt(document.getElementById('ec-id').value);
+  const idx = state.contas.findIndex(function(x){ return x.id === id; });
+  if (idx === -1) return;
+  state.contas[idx].nome = document.getElementById('ec-nome').value.trim();
+  state.contas[idx].valor = parseFloat(document.getElementById('ec-valor').value) || state.contas[idx].valor;
+  state.contas[idx].vencimento = document.getElementById('ec-vencimento').value;
+  state.contas[idx].banco = document.getElementById('ec-banco').value.trim();
+  document.getElementById('edit-conta-modal').classList.remove('open');
+  save(); renderContas();
+}
+
+function salvarMultiplicador() {
+  const v = parseFloat(document.getElementById('c-multiplicador').value);
+  state.multiplicadorConta = (!isNaN(v) && v >= 0) ? v : 33;
+  save(); renderContas();
+}
+
+function renderContas() {
+  const lista = state.contas || [];
+  document.getElementById('c-multiplicador').value = (state.multiplicadorConta != null ? state.multiplicadorConta : 33);
+  document.getElementById('count-contas').textContent = lista.length;
+
+  const pendentes = lista.filter(function(c){ return c.status !== 'pago'; });
+  const totalReal = pendentes.reduce(function(a,c){ return a + c.valor; }, 0);
+  const totalUber = pendentes.reduce(function(a,c){ return a + valorUber(c.valor); }, 0);
+  document.getElementById('contas-total-real').textContent = fmt(totalReal);
+  document.getElementById('contas-total-uber').textContent = fmt(totalUber);
+
+  const el = document.getElementById('lista-contas');
+  if (!lista.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🧾</div>Nenhuma conta registrada ainda.</div>';
+    return;
+  }
+  const ordenada = [...lista].sort(function(a,b){ return (a.vencimento||'').localeCompare(b.vencimento||''); });
+  el.innerHTML = ordenada.map(function(c) {
+    const pago = c.status === 'pago';
+    return '<div class="list-item" style="' + (pago ? 'opacity:0.55;' : '') + '">' +
+      '<div class="item-icon ' + (pago ? 'earn' : 'spend') + '" style="cursor:pointer;" onclick="togglePagoConta(' + c.id + ')">' + (pago ? '✅' : '🧾') + '</div>' +
+      '<div class="item-body" onclick="editarConta(' + c.id + ')" style="cursor:pointer;">' +
+        '<div class="item-name">' + c.nome + (pago ? ' <span style="font-size:11px; color:var(--green);">(pago)</span>' : '') + '</div>' +
+        '<div class="item-meta">Vence ' + fmtData(c.vencimento) + (c.banco ? ' · ' + c.banco : '') + '</div>' +
+        (pago ? '' : '<div style="font-size:12px; color:var(--gold); margin-top:2px;">Preciso faturar: ' + fmt(valorUber(c.valor)) + '</div>') +
+      '</div>' +
+      '<div class="item-right">' +
+        '<div class="item-amount amount-neg">' + fmt(c.valor) + '</div>' +
+        '<button class="item-del" onclick="removerConta(' + c.id + ')">✕</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
 var painelListaExpanded = false;
