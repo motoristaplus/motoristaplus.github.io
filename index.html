@@ -732,6 +732,47 @@
       </div>
     </div>
 
+    <!-- MANUTENÇÃO DO CARRO -->
+    <div id="tab-manutencao" class="section">
+      <button class="btn btn-ghost" style="margin-bottom:12px;" onclick="switchTab('dashboard')">← Voltar ao Painel</button>
+
+      <div class="card">
+        <div class="card-title">Pendente</div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Valor real</div>
+            <div class="metric-value red" id="manut-total-real">R$ 0,00</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Preciso faturar</div>
+            <div class="metric-value" id="manut-total-uber" style="color:var(--gold);">R$ 0,00</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔧 Novo item</div>
+        <div class="form-group">
+          <label class="form-label">Peça / serviço</label>
+          <input class="form-input" type="text" id="mn-nome" placeholder="Ex: Troca de óleo, Pastilha de freio...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Valor real (R$)</label>
+          <input class="form-input" type="number" id="mn-valor" placeholder="0,00" min="0" step="0.01" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Observação (opcional)</label>
+          <input class="form-input" type="text" id="mn-obs" placeholder="Ex: trocar junto com o filtro">
+        </div>
+        <button class="btn btn-red" onclick="adicionarManutencao()">🔧 &nbsp;Adicionar item</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Itens registrados <span id="count-manut">0</span></div>
+        <div id="lista-manutencao"><div class="empty"><div class="empty-icon">🔧</div>Nenhum item registrado ainda.</div></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -862,6 +903,30 @@
   </div>
 </div>
 
+<!-- Modal editar manutenção -->
+<div class="modal-overlay" id="edit-manut-modal" onclick="closeEditManutModal(event)">
+  <div class="modal">
+    <div class="modal-title">✏️ Editar item</div>
+    <div class="form-group">
+      <label class="form-label">Peça / serviço</label>
+      <input class="form-input" type="text" id="emn-nome">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Valor real (R$)</label>
+      <input class="form-input" type="number" id="emn-valor" min="0" step="0.01" inputmode="decimal">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Observação</label>
+      <input class="form-input" type="text" id="emn-obs">
+    </div>
+    <input type="hidden" id="emn-id">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;">
+      <button class="btn" onclick="closeEditManutModal()">Cancelar</button>
+      <button class="btn btn-red" onclick="salvarEditManutencao()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal meta -->
 <div class="modal-overlay" id="meta-modal" onclick="closeMetaModal(event)">
   <div class="modal">
@@ -905,7 +970,8 @@ const DEFAULT_STATE = {
   ultimoValorPorCategoria: {},
   telefone: '',
   contas: [],
-  multiplicadorConta: 33
+  multiplicadorConta: 33,
+  manutencoes: []
 };
 let state = null;
 
@@ -1182,6 +1248,7 @@ function conectarDadosNuvem() {
       if (state.telefone === undefined) state.telefone = '';
       if (!state.contas) state.contas = [];
       if (state.multiplicadorConta === undefined) state.multiplicadorConta = 33;
+      if (!state.manutencoes) state.manutencoes = [];
       iniciarApp();
       carregandoRemoto = false;
     } else {
@@ -1461,6 +1528,7 @@ function switchTab(t) {
   if (t==='ganhos') atualizarBotaoHorasHoje();
   if (t==='tempoon') renderTempoOn();
   if (t==='contas') renderContas();
+  if (t==='manutencao') renderManutencao();
 }
 
 // ---- GANHOS ----
@@ -1804,6 +1872,106 @@ function renderContas() {
   html += pendentesOrdenadas.length ? pendentesOrdenadas.map(linhaConta).join('') : '<div class="empty" style="padding:14px 0;">Nenhuma conta pendente. 🎉</div>';
   html += '<div style="font-size:12px; font-weight:600; color:var(--green); margin:16px 0 6px;">✅ PAGAS (' + pagasOrdenadas.length + ')</div>';
   html += pagasOrdenadas.length ? pagasOrdenadas.map(linhaConta).join('') : '<div class="empty" style="padding:14px 0;">Nenhuma conta paga ainda neste período.</div>';
+  el.innerHTML = html;
+}
+
+// ---- MANUTENÇÃO DO CARRO ----
+function adicionarManutencao() {
+  const nome = document.getElementById('mn-nome').value.trim();
+  const v = parseFloat(document.getElementById('mn-valor').value);
+  if (!nome) { alert('Digite o nome da peça ou serviço.'); return; }
+  if (!v || v <= 0) { alert('Informe um valor válido.'); return; }
+  if (!state.manutencoes) state.manutencoes = [];
+  state.manutencoes.push({
+    id: Date.now(),
+    nome: nome,
+    valor: v,
+    obs: document.getElementById('mn-obs').value.trim(),
+    status: 'pendente'
+  });
+  document.getElementById('mn-nome').value = '';
+  document.getElementById('mn-valor').value = '';
+  document.getElementById('mn-obs').value = '';
+  save(); renderManutencao();
+}
+
+function toggleFeitaManutencao(id) {
+  const m = state.manutencoes.find(function(x){ return x.id === id; });
+  if (!m) return;
+  m.status = m.status === 'feita' ? 'pendente' : 'feita';
+  save(); renderManutencao();
+}
+
+function removerManutencao(id) {
+  if (!confirm('Remover este item?')) return;
+  state.manutencoes = state.manutencoes.filter(function(x){ return x.id !== id; });
+  save(); renderManutencao();
+}
+
+function editarManutencao(id) {
+  const m = state.manutencoes.find(function(x){ return x.id === id; });
+  if (!m) return;
+  document.getElementById('emn-id').value = id;
+  document.getElementById('emn-nome').value = m.nome;
+  document.getElementById('emn-valor').value = m.valor;
+  document.getElementById('emn-obs').value = m.obs || '';
+  document.getElementById('edit-manut-modal').classList.add('open');
+}
+
+function closeEditManutModal(e) {
+  if (!e || e.target === document.getElementById('edit-manut-modal'))
+    document.getElementById('edit-manut-modal').classList.remove('open');
+}
+
+function salvarEditManutencao() {
+  const id = parseInt(document.getElementById('emn-id').value);
+  const idx = state.manutencoes.findIndex(function(x){ return x.id === id; });
+  if (idx === -1) return;
+  state.manutencoes[idx].nome = document.getElementById('emn-nome').value.trim();
+  state.manutencoes[idx].valor = parseFloat(document.getElementById('emn-valor').value) || state.manutencoes[idx].valor;
+  state.manutencoes[idx].obs = document.getElementById('emn-obs').value.trim();
+  document.getElementById('edit-manut-modal').classList.remove('open');
+  save(); renderManutencao();
+}
+
+function renderManutencao() {
+  const todas = state.manutencoes || [];
+  document.getElementById('count-manut').textContent = todas.length;
+
+  const pendentes = todas.filter(function(m){ return m.status !== 'feita'; });
+  const feitas = todas.filter(function(m){ return m.status === 'feita'; });
+  const totalReal = pendentes.reduce(function(a,m){ return a + m.valor; }, 0);
+  const totalUber = pendentes.reduce(function(a,m){ return a + valorUber(m.valor); }, 0);
+  document.getElementById('manut-total-real').textContent = fmt(totalReal);
+  document.getElementById('manut-total-uber').textContent = fmt(totalUber);
+
+  const el = document.getElementById('lista-manutencao');
+  if (!todas.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🔧</div>Nenhum item registrado ainda.</div>';
+    return;
+  }
+
+  function linhaManut(m) {
+    const feita = m.status === 'feita';
+    return '<div class="list-item" style="' + (feita ? 'opacity:0.55;' : '') + '">' +
+      '<div class="item-icon ' + (feita ? 'earn' : 'spend') + '" style="cursor:pointer;" onclick="toggleFeitaManutencao(' + m.id + ')">' + (feita ? '✅' : '🔧') + '</div>' +
+      '<div class="item-body" onclick="editarManutencao(' + m.id + ')" style="cursor:pointer;">' +
+        '<div class="item-name">' + m.nome + '</div>' +
+        (m.obs ? '<div class="item-meta">' + m.obs + '</div>' : '') +
+        (feita ? '' : '<div style="font-size:12px; color:var(--gold); margin-top:2px;">Preciso faturar: ' + fmt(valorUber(m.valor)) + '</div>') +
+      '</div>' +
+      '<div class="item-right">' +
+        '<div class="item-amount amount-neg">' + fmt(m.valor) + '</div>' +
+        '<button class="item-del" onclick="removerManutencao(' + m.id + ')">✕</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  let html = '';
+  html += '<div style="font-size:12px; font-weight:600; color:var(--red); margin-bottom:6px;">🔴 PENDENTES (' + pendentes.length + ')</div>';
+  html += pendentes.length ? pendentes.map(linhaManut).join('') : '<div class="empty" style="padding:14px 0;">Nenhum item pendente. 🎉</div>';
+  html += '<div style="font-size:12px; font-weight:600; color:var(--green); margin:16px 0 6px;">✅ FEITAS (' + feitas.length + ')</div>';
+  html += feitas.length ? feitas.map(linhaManut).join('') : '<div class="empty" style="padding:14px 0;">Nenhum item feito ainda.</div>';
   el.innerHTML = html;
 }
 
