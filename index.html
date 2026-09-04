@@ -268,18 +268,11 @@
         <div class="menu-header-email" id="menu-user-email"></div>
       </div>
     </div>
-    <div style="font-size:12px; font-weight:700; color:var(--text2); padding:14px 20px 6px; display:flex; align-items:center; gap:6px;">
-      <span style="font-size:15px;">🚗</span>MEU CONTROLE
-    </div>
-    <button class="menu-item" onclick="switchTab('dashboard'); fecharMenu();"><span class="menu-item-icon">📊</span>Painel</button>
-    <button class="menu-item" onclick="switchTab('ganhos'); fecharMenu();"><span class="menu-item-icon">💰</span>Ganhos</button>
-    <button class="menu-item" onclick="switchTab('gastos'); fecharMenu();"><span class="menu-item-icon">🔴</span>Gastos</button>
-    <button class="menu-item" onclick="switchTab('tempoon'); fecharMenu();"><span class="menu-item-icon">⏱️</span>Expediente</button>
-    <div style="border-top:1px solid var(--border); margin:8px 0;"></div>
     <button class="menu-item" onclick="abrirPerfil()"><span class="menu-item-icon">👤</span>Meu Perfil</button>
-    <button class="menu-item" onclick="switchTab('historico'); fecharMenu();"><span class="menu-item-icon">📋</span>Histórico</button>
+    <button class="menu-item" onclick="switchTab('dashboard'); fecharMenu();"><span class="menu-item-icon">🚗</span>Meu Controle</button>
     <button class="menu-item" onclick="switchTab('contas'); fecharMenu();"><span class="menu-item-icon">🧾</span>Contas a Pagar</button>
     <button class="menu-item" onclick="switchTab('manutencao'); fecharMenu();"><span class="menu-item-icon">🔧</span>Manutenção do Carro</button>
+    <button class="menu-item" onclick="switchTab('historico'); fecharMenu();"><span class="menu-item-icon">📋</span>Histórico</button>
     <div style="flex:1;"></div>
     <div style="border-top:1px solid var(--border); margin:8px 0;"></div>
     <button class="menu-item" onclick="abrirConfiguracoes()"><span class="menu-item-icon">⚙️</span>Configurações</button>
@@ -363,6 +356,14 @@
       </div>
     </div>
 
+    <div style="border-top:1px solid var(--border); padding-top:16px; margin-top:16px;">
+      <div class="card-title" style="margin-bottom:10px;">🎯 Meta mensal</div>
+      <div class="form-group">
+        <label class="form-label">Quanto quer faturar esse mês (R$)</label>
+        <input class="form-input" type="number" id="config-meta-mensal" placeholder="0,00" min="0" step="0.01" inputmode="decimal" onchange="salvarMetaMensal()">
+      </div>
+    </div>
+
     <button class="btn btn-ghost" style="margin-top:20px;" onclick="closeConfigModal()">Fechar</button>
   </div>
 </div>
@@ -409,86 +410,86 @@
     <!-- PAINEL -->
     <div id="tab-dashboard" class="section active">
       <div class="card" style="background:linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);">
-        <div style="font-size:14px; color:var(--text2); margin-bottom:14px;">👋 Bem-vindo</div>
+        <div style="font-size:17px; color:var(--text); font-weight:600; margin-bottom:14px;">👋🏽 Bem-vindo</div>
         <div style="display:flex; flex-direction:column; gap:16px;">
           <div>
-            <div style="font-size:12px; color:var(--text2);">Sobra do mês</div>
+            <div style="font-size:12px; color:var(--text2);">Renda Principal</div>
             <div class="metric-value" id="painel-sobra" style="font-size:26px;">R$ 0,00</div>
           </div>
           <div>
             <div style="font-size:12px; color:var(--text2);">Faturado nos Apps</div>
             <div class="metric-value green" id="painel-faturado" style="font-size:26px;">R$ 0,00</div>
           </div>
-          <div>
-            <div style="font-size:12px; color:var(--text2);">Saldo Pendente</div>
-            <div class="metric-value" id="painel-saldo-pendente" style="font-size:26px; color:var(--gold);">R$ 0,00</div>
+        </div>
+        <button class="btn btn-ghost" style="margin-top:16px;" onclick="toggleDetalhesPainel()" id="btn-ver-detalhes">Ver detalhes ▾</button>
+      </div>
+
+      <div id="painel-detalhes" style="display:none;">
+        <div style="display:flex; gap:6px; margin-top:4px; margin-bottom:4px;">
+          <button class="period-btn" onclick="setPeriod('dia')">Dia</button>
+          <button class="period-btn active" onclick="setPeriod('semana')">Semana</button>
+          <button class="period-btn" onclick="setPeriod('mes')">Mês</button>
+          <button class="period-btn" onclick="setPeriod('tudo')">Anual</button>
+        </div>
+        <div id="dia-picker" style="display:none; margin-bottom:8px;">
+          <input class="form-input" type="date" id="filtro-dia" onchange="renderDashboard()" style="width:100%;">
+        </div>
+        <div id="mes-picker" style="display:none; margin-bottom:8px;">
+          <select class="form-select" id="filtro-mes" onchange="renderDashboard()" style="width:100%;">
+            <option value="2026-03">Março 2026</option>
+            <option value="2026-04">Abril 2026</option>
+            <option value="2026-05">Maio 2026</option>
+            <option value="2026-06">Junho 2026</option>
+            <option value="2026-07" selected>Julho 2026</option>
+          </select>
+        </div>
+        <div id="semana-picker" style="margin-bottom:8px; display:none;">
+          <div style="display:flex; gap:6px; align-items:center;">
+            <button class="btn" style="padding:8px 10px; flex-shrink:0; width:auto;" onclick="mudarSemana(-1)">&#8592;</button>
+            <div style="flex:1; text-align:center; font-size:12.5px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="semana-label"></div>
+            <button class="btn" style="padding:8px 10px; flex-shrink:0; width:auto;" onclick="mudarSemana(1)">&#8594;</button>
+          </div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Ganhos</div>
+            <div class="metric-value green" id="m-ganhos">R$ 0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Gastos</div>
+            <div class="metric-value red" id="m-gastos">R$ 0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Líquido</div>
+            <div class="metric-value blue" id="m-liquido">R$ 0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Corridas</div>
+            <div class="metric-value blue" id="m-corridas">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Horas</div>
+            <div class="metric-value" id="m-horas">0h</div>
+          </div>
+          <div class="metric" id="metric-dias-wrap">
+            <div class="metric-label">Dias trab.</div>
+            <div class="metric-value" id="m-dias">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">KM rodados</div>
+            <div class="metric-value" id="m-km">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">R$/hora</div>
+            <div class="metric-value" id="m-rph">-</div>
           </div>
         </div>
       </div>
 
-      <div style="display:flex; gap:6px; margin-top:4px; margin-bottom:4px;">
-        <button class="period-btn active" onclick="setPeriod('semana')">Semana</button>
-        <button class="period-btn" onclick="setPeriod('mes')">Mês</button>
-        <button class="period-btn" onclick="setPeriod('dia')">Dia</button>
-        <button class="period-btn" onclick="setPeriod('tudo')">Anual</button>
-      </div>
-      <div id="dia-picker" style="display:none; margin-bottom:8px;">
-        <input class="form-input" type="date" id="filtro-dia" onchange="renderDashboard()" style="width:100%;">
-      </div>
-      <div id="mes-picker" style="display:none; margin-bottom:8px;">
-        <select class="form-select" id="filtro-mes" onchange="renderDashboard()" style="width:100%;">
-          <option value="2026-03">Março 2026</option>
-          <option value="2026-04">Abril 2026</option>
-          <option value="2026-05">Maio 2026</option>
-          <option value="2026-06">Junho 2026</option>
-          <option value="2026-07" selected>Julho 2026</option>
-        </select>
-      </div>
-      <div id="semana-picker" style="margin-bottom:8px; display:none;">
-        <div style="display:flex; gap:6px; align-items:center;">
-          <button class="btn" style="padding:8px 10px; flex-shrink:0; width:auto;" onclick="mudarSemana(-1)">&#8592;</button>
-          <div style="flex:1; text-align:center; font-size:12.5px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="semana-label"></div>
-          <button class="btn" style="padding:8px 10px; flex-shrink:0; width:auto;" onclick="mudarSemana(1)">&#8594;</button>
-        </div>
-      </div>
       <div id="install-hint" class="install-hint" style="margin-top:4px;">
         <span>💡 <strong>Dica:</strong> No Chrome, toque em "⋮" → "Adicionar à tela inicial" para instalar como app.</span>
         <button class="install-hint-close" onclick="document.getElementById('install-hint').style.display='none'">✕</button>
-      </div>
-
-      <div class="metrics">
-        <div class="metric">
-          <div class="metric-label">Ganhos</div>
-          <div class="metric-value green" id="m-ganhos">R$ 0</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Gastos</div>
-          <div class="metric-value red" id="m-gastos">R$ 0</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Líquido</div>
-          <div class="metric-value blue" id="m-liquido">R$ 0</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Corridas</div>
-          <div class="metric-value blue" id="m-corridas">0</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Horas</div>
-          <div class="metric-value" id="m-horas">0h</div>
-        </div>
-        <div class="metric" id="metric-dias-wrap">
-          <div class="metric-label">Dias trab.</div>
-          <div class="metric-value" id="m-dias">0</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">KM rodados</div>
-          <div class="metric-value" id="m-km">0</div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">R$/hora</div>
-          <div class="metric-value" id="m-rph">-</div>
-        </div>
       </div>
 
       <div class="card">
@@ -497,6 +498,14 @@
           <button class="btn btn-ghost" onclick="openMetaModal()">✏️ Editar</button>
         </div>
         <div id="goal-section"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          Meta mensal
+          <button class="btn btn-ghost" onclick="abrirConfiguracoes()">✏️ Editar</button>
+        </div>
+        <div id="meta-mensal-section"></div>
       </div>
 
       <div class="card">
@@ -769,7 +778,7 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Banco / forma de pagamento</label>
+            <label class="form-label">Banco</label>
             <select class="form-select" id="c-banco">
               <option value="Banco do Brasil">Banco do Brasil</option>
               <option value="Santander">Santander</option>
@@ -994,7 +1003,7 @@
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Banco / forma de pagamento</label>
+        <label class="form-label">Banco</label>
         <select class="form-select" id="ec-banco">
           <option value="Banco do Brasil">Banco do Brasil</option>
           <option value="Santander">Santander</option>
@@ -1118,7 +1127,8 @@ const DEFAULT_STATE = {
   contas: [],
   multiplicadorConta: 33,
   manutencoes: [],
-  rendas: []
+  rendas: [],
+  metaMensal: null
 };
 let state = null;
 
@@ -1264,6 +1274,7 @@ function closePerfilModal(e) {
 function abrirConfiguracoes() {
   fecharMenu();
   document.getElementById('config-multiplicador').value = (state.multiplicadorConta != null ? state.multiplicadorConta : 33);
+  document.getElementById('config-meta-mensal').value = state.metaMensal || '';
   renderRendas();
   document.getElementById('config-modal').classList.add('open');
 }
@@ -1443,6 +1454,7 @@ function conectarDadosNuvem() {
       if (state.multiplicadorConta === undefined) state.multiplicadorConta = 33;
       if (!state.manutencoes) state.manutencoes = [];
       if (!state.rendas) state.rendas = [];
+      if (state.metaMensal === undefined) state.metaMensal = null;
       iniciarApp();
       carregandoRemoto = false;
     } else {
@@ -2033,6 +2045,12 @@ function salvarMultiplicador() {
   save(); renderContas(); renderManutencao();
 }
 
+function salvarMetaMensal() {
+  const v = parseFloat(document.getElementById('config-meta-mensal').value);
+  state.metaMensal = (!isNaN(v) && v > 0) ? v : null;
+  save(); renderDashboard();
+}
+
 function renderContas() {
   const todas = state.contas || [];
   document.getElementById('count-contas').textContent = todas.length;
@@ -2314,19 +2332,33 @@ function renderResumoFinanceiro() {
   const elFaturado = document.getElementById('painel-faturado');
   if (elFaturado) elFaturado.textContent = fmt(totalFaturado);
 
-  const contasUberPendentesMes = (state.contas || []).filter(function(c){ return c.origem !== 'clt' && c.status !== 'pago' && (c.vencimento||'').slice(0,7) === mesAtual; });
-  const totalPrecisoFaturar = contasUberPendentesMes.reduce(function(a,c){ return a + valorUber(c.valor); }, 0);
-  const saldoPendente = totalPrecisoFaturar - totalFaturado;
-  const elSaldo = document.getElementById('painel-saldo-pendente');
-  if (elSaldo) {
-    if (saldoPendente <= 0) {
-      elSaldo.textContent = '🎉 ' + fmt(Math.abs(saldoPendente)) + ' sobrando';
-      elSaldo.style.color = 'var(--green)';
-    } else {
-      elSaldo.textContent = fmt(saldoPendente);
-      elSaldo.style.color = 'var(--gold)';
-    }
+  renderMetaMensal(totalFaturado);
+}
+
+function renderMetaMensal(totalFaturadoMes) {
+  const el = document.getElementById('meta-mensal-section');
+  if (!el) return;
+  if (!state.metaMensal || state.metaMensal <= 0) {
+    el.innerHTML = `
+      <div class="empty" style="padding:16px 0;">
+        <div class="empty-icon">🎯</div>
+        Você ainda não definiu uma meta mensal.<br>Defina em Configurações.
+      </div>`;
+    return;
   }
+  const pct = Math.min(100, Math.round((totalFaturadoMes/state.metaMensal)*100));
+  const falta = state.metaMensal - totalFaturadoMes;
+  el.innerHTML = `
+    <div class="goal-info" style="margin-bottom:4px;">
+      <span>${fmt(totalFaturadoMes)}</span><span>Meta: ${fmt(state.metaMensal)}</span>
+    </div>
+    <div class="goal-track"><div class="goal-fill" style="width:${pct}%"></div></div>
+    <div class="goal-info">
+      <span style="color:${pct>=100?'var(--green)':'var(--text2)'}; font-weight:${pct>=100?'500':'400'}">
+        ${pct>=100?'🎯 Meta atingida!':'Faltam '+fmt(falta)}
+      </span>
+      <span>${pct}%</span>
+    </div>`;
 }
 
 function renderDashboard() {
@@ -2824,10 +2856,18 @@ function limparTudo() {
 let currentPeriod = 'semana';
 var semanaOffset = 0;
 
+function toggleDetalhesPainel() {
+  const el = document.getElementById('painel-detalhes');
+  const btn = document.getElementById('btn-ver-detalhes');
+  const aberto = el.style.display !== 'none';
+  el.style.display = aberto ? 'none' : 'block';
+  btn.textContent = aberto ? 'Ver detalhes ▾' : 'Ocultar detalhes ▴';
+}
+
 function setPeriod(p) {
   currentPeriod = p;
   document.querySelectorAll('.period-btn').forEach((b,i) => {
-    b.classList.toggle('active', ['semana','mes','dia','tudo'][i] === p);
+    b.classList.toggle('active', ['dia','semana','mes','tudo'][i] === p);
   });
   document.getElementById('dia-picker').style.display = p === 'dia' ? 'block' : 'none';
   document.getElementById('mes-picker').style.display = p === 'mes' ? 'block' : 'none';
