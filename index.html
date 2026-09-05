@@ -268,6 +268,7 @@
         <div class="menu-header-email" id="menu-user-email"></div>
       </div>
     </div>
+    <button class="menu-item" onclick="switchTab('dashboard'); fecharMenu();"><span class="menu-item-icon">🏠</span>Início</button>
     <button class="menu-item" onclick="abrirPerfil()"><span class="menu-item-icon">👤</span>Meu Perfil</button>
     <button class="menu-item" onclick="switchTab('dashboard'); fecharMenu();"><span class="menu-item-icon">🚗</span>Meu Controle</button>
     <button class="menu-item" onclick="switchTab('contas'); fecharMenu();"><span class="menu-item-icon">🧾</span>Contas a Pagar</button>
@@ -276,7 +277,7 @@
     <div style="flex:1;"></div>
     <div style="border-top:1px solid var(--border); margin:8px 0;"></div>
     <button class="menu-item" onclick="abrirConfiguracoes()"><span class="menu-item-icon">⚙️</span>Configurações</button>
-    <button class="menu-item" onclick="fecharMenu(); sair();" style="color:var(--red);"><span class="menu-item-icon">🚪</span>Sair</button>
+    <button class="menu-item" onclick="fecharMenu(); sair();"><span class="menu-item-icon">🚪</span>Sair</button>
   </div>
 </div>
 
@@ -409,81 +410,29 @@
 
     <!-- PAINEL -->
     <div id="tab-dashboard" class="section active">
-      <div class="card" style="background:linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);">
-        <div style="font-size:17px; color:var(--text); font-weight:600; margin-bottom:14px;">👋🏽 Bem-vindo</div>
-        <div style="display:flex; flex-direction:column; gap:16px;">
-          <div>
-            <div style="font-size:12px; color:var(--text2);">Renda Principal</div>
-            <div class="metric-value" id="painel-sobra" style="font-size:26px;">R$ 0,00</div>
-          </div>
-          <div>
-            <div style="font-size:12px; color:var(--text2);">Faturado nos Apps</div>
-            <div class="metric-value green" id="painel-faturado" style="font-size:26px;">R$ 0,00</div>
-          </div>
-        </div>
-        <button class="btn btn-ghost" style="margin-top:16px;" onclick="toggleDetalhesPainel()" id="btn-ver-detalhes">Ver detalhes ▾</button>
+      <div style="display:flex; gap:6px; margin-top:4px; margin-bottom:4px;">
+        <button class="period-btn" onclick="setPeriod('dia')">Dia</button>
+        <button class="period-btn active" onclick="setPeriod('semana')">Semana</button>
+        <button class="period-btn" onclick="setPeriod('mes')">Mês</button>
+        <button class="period-btn" onclick="setPeriod('tudo')">Anual</button>
       </div>
-
-      <div id="painel-detalhes" style="display:none;">
-        <div style="display:flex; gap:6px; margin-top:4px; margin-bottom:4px;">
-          <button class="period-btn" onclick="setPeriod('dia')">Dia</button>
-          <button class="period-btn active" onclick="setPeriod('semana')">Semana</button>
-          <button class="period-btn" onclick="setPeriod('mes')">Mês</button>
-          <button class="period-btn" onclick="setPeriod('tudo')">Anual</button>
-        </div>
-        <div id="dia-picker" style="display:none; margin-bottom:8px;">
-          <input class="form-input" type="date" id="filtro-dia" onchange="renderDashboard()" style="width:100%;">
-        </div>
-        <div id="mes-picker" style="display:none; margin-bottom:8px;">
-          <select class="form-select" id="filtro-mes" onchange="renderDashboard()" style="width:100%;">
-            <option value="2026-03">Março 2026</option>
-            <option value="2026-04">Abril 2026</option>
-            <option value="2026-05">Maio 2026</option>
-            <option value="2026-06">Junho 2026</option>
-            <option value="2026-07" selected>Julho 2026</option>
-          </select>
-        </div>
-        <div id="semana-picker" style="margin-bottom:8px; display:none;">
-          <div style="display:flex; gap:6px; align-items:center;">
-            <button class="btn" style="padding:8px 10px; flex-shrink:0; width:auto;" onclick="mudarSemana(-1)">&#8592;</button>
-            <div style="flex:1; text-align:center; font-size:12.5px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="semana-label"></div>
-            <button class="btn" style="padding:8px 10px; flex-shrink:0; width:auto;" onclick="mudarSemana(1)">&#8594;</button>
-          </div>
-        </div>
-
-        <div class="metrics">
-          <div class="metric">
-            <div class="metric-label">Ganhos</div>
-            <div class="metric-value green" id="m-ganhos">R$ 0</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Gastos</div>
-            <div class="metric-value red" id="m-gastos">R$ 0</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Líquido</div>
-            <div class="metric-value blue" id="m-liquido">R$ 0</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Corridas</div>
-            <div class="metric-value blue" id="m-corridas">0</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Horas</div>
-            <div class="metric-value" id="m-horas">0h</div>
-          </div>
-          <div class="metric" id="metric-dias-wrap">
-            <div class="metric-label">Dias trab.</div>
-            <div class="metric-value" id="m-dias">0</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">KM rodados</div>
-            <div class="metric-value" id="m-km">0</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">R$/hora</div>
-            <div class="metric-value" id="m-rph">-</div>
-          </div>
+      <div id="dia-picker" style="display:none; margin-bottom:8px;">
+        <input class="form-input" type="date" id="filtro-dia" onchange="renderDashboard()" style="width:100%;">
+      </div>
+      <div id="mes-picker" style="display:none; margin-bottom:8px;">
+        <select class="form-select" id="filtro-mes" onchange="renderDashboard()" style="width:100%;">
+          <option value="2026-03">Março 2026</option>
+          <option value="2026-04">Abril 2026</option>
+          <option value="2026-05">Maio 2026</option>
+          <option value="2026-06">Junho 2026</option>
+          <option value="2026-07" selected>Julho 2026</option>
+        </select>
+      </div>
+      <div id="semana-picker" style="margin-bottom:8px; display:none;">
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button class="btn" style="padding:8px 10px; flex-shrink:0; width:auto;" onclick="mudarSemana(-1)">&#8592;</button>
+          <div style="flex:1; text-align:center; font-size:12.5px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="semana-label"></div>
+          <button class="btn" style="padding:8px 10px; flex-shrink:0; width:auto;" onclick="mudarSemana(1)">&#8594;</button>
         </div>
       </div>
 
@@ -492,19 +441,46 @@
         <button class="install-hint-close" onclick="document.getElementById('install-hint').style.display='none'">✕</button>
       </div>
 
-      <div class="card">
-        <div class="card-title">
-          Meta semanal
-          <button class="btn btn-ghost" onclick="openMetaModal()">✏️ Editar</button>
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-label">Ganhos</div>
+          <div class="metric-value green" id="m-ganhos">R$ 0</div>
         </div>
-        <div id="goal-section"></div>
+        <div class="metric">
+          <div class="metric-label">Gastos</div>
+          <div class="metric-value red" id="m-gastos">R$ 0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Líquido</div>
+          <div class="metric-value blue" id="m-liquido">R$ 0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Corridas</div>
+          <div class="metric-value blue" id="m-corridas">0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Horas</div>
+          <div class="metric-value" id="m-horas">0h</div>
+        </div>
+        <div class="metric" id="metric-dias-wrap">
+          <div class="metric-label">Dias trab.</div>
+          <div class="metric-value" id="m-dias">0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">KM rodados</div>
+          <div class="metric-value" id="m-km">0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">R$/hora</div>
+          <div class="metric-value" id="m-rph">-</div>
+        </div>
       </div>
 
-      <div class="card">
-        <div class="card-title">
-          Meta mensal
-          <button class="btn btn-ghost" onclick="abrirConfiguracoes()">✏️ Editar</button>
-        </div>
+      <div class="card" style="cursor:pointer;" onclick="abrirConfiguracoes()">
+        <div class="card-title">Metas</div>
+        <div style="font-size:12px; color:var(--text2); font-weight:600; margin-bottom:2px;">Meta semanal</div>
+        <div id="goal-section"></div>
+        <div style="font-size:12px; color:var(--text2); font-weight:600; margin:14px 0 2px;">Meta mensal</div>
         <div id="meta-mensal-section"></div>
       </div>
 
@@ -589,7 +565,9 @@
 
     <!-- GANHOS -->
     <div id="tab-ganhos" class="section">
-      <div class="card">
+      <button class="btn btn-green" id="btn-abrir-novo-ganho" onclick="toggleFormNovoGanho()" style="margin-bottom:14px;">✓ &nbsp;Registrar ganho</button>
+
+      <div class="card" id="form-novo-ganho" style="display:none;">
         <div class="card-title">Registrar ganho</div>
         <div class="form-row">
           <div class="form-group">
@@ -620,8 +598,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Horas trabalhadas</label>
-            <input class="form-input" type="number" id="g-horas" placeholder="0,0" min="0" step="0.5" inputmode="decimal" oninput="atualizarLegendaHoras()">
-            <div id="g-horas-legenda" style="font-size:11px; color:var(--text2); margin-top:4px; display:none;"></div>
+            <input class="form-input" type="text" id="g-horas" placeholder="0:00:00" inputmode="numeric" oninput="mascararHoras(this)">
           </div>
           <div class="form-group">
             <label class="form-label">KM rodados</label>
@@ -728,11 +705,31 @@
         <div class="card-title">Hoje</div>
         <div class="metric-value" id="tempoon-hoje-total" style="font-size:28px;">0h</div>
         <div style="font-size:12px; color:var(--text2); margin-top:2px;" id="tempoon-hoje-turnos">0 turnos</div>
+        <div class="metrics" style="margin-top:14px; margin-bottom:0;">
+          <div class="metric">
+            <div class="metric-label">Faturado</div>
+            <div class="metric-value green" id="tempoon-hoje-faturado" style="font-size:16px;">R$ 0,00</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">R$/hora</div>
+            <div class="metric-value" id="tempoon-hoje-rph" style="font-size:16px;">-</div>
+          </div>
+        </div>
       </div>
 
       <div class="card">
         <div class="card-title">Esta semana</div>
         <div class="metric-value" id="tempoon-semana-total" style="font-size:22px;">0h</div>
+        <div class="metrics" style="margin-top:14px; margin-bottom:0;">
+          <div class="metric">
+            <div class="metric-label">Faturado</div>
+            <div class="metric-value green" id="tempoon-semana-faturado" style="font-size:16px;">R$ 0,00</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">R$/hora</div>
+            <div class="metric-value" id="tempoon-semana-rph" style="font-size:16px;">-</div>
+          </div>
+        </div>
       </div>
 
       <div class="card">
@@ -744,6 +741,35 @@
     <!-- CONTAS A PAGAR -->
     <div id="tab-contas" class="section">
       <button class="btn btn-ghost" style="margin-bottom:12px;" onclick="switchTab('dashboard')">← Voltar ao Painel</button>
+
+      <div class="card" style="background:linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);">
+        <div style="font-size:17px; color:var(--text); font-weight:600; margin-bottom:14px;">👋🏽 Seja Bem-vindo</div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Faturado no mês</div>
+            <div class="metric-value green" id="painel-faturado" style="font-size:20px;">R$ 0,00</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Líquido</div>
+            <div class="metric-value" id="painel-liquido" style="font-size:20px;">R$ 0,00</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Saldo Renda Principal</div>
+            <div class="metric-value" id="painel-sobra" style="font-size:20px;">R$ 0,00</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Total de Boletos a vencer</div>
+            <div class="metric-value red" id="painel-boletos" style="font-size:20px;">R$ 0,00</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <div style="font-size:12px; color:var(--text2); font-weight:600; margin-bottom:6px;">Alvo do mês</div>
+          <div class="chart-wrap" style="height:70px;">
+            <canvas id="preciso-faturar-chart"></canvas>
+          </div>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-title">Pendente</div>
         <div class="metrics">
@@ -752,7 +778,7 @@
             <div class="metric-value red" id="contas-total-real">R$ 0,00</div>
           </div>
           <div class="metric">
-            <div class="metric-label">Preciso faturar</div>
+            <div class="metric-label">Alvo do mês</div>
             <div class="metric-value" id="contas-total-uber" style="color:var(--gold);">R$ 0,00</div>
           </div>
         </div>
@@ -765,6 +791,13 @@
         <div class="form-group">
           <label class="form-label">Nome da conta</label>
           <input class="form-input" type="text" id="c-nome" placeholder="Ex: Aluguel, Condomínio, Cartão...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo de conta</label>
+          <select class="form-select" id="c-tipo-conta">
+            <option value="ocasional">Ocasional (só este mês)</option>
+            <option value="fixa">Fixa (repete todo mês)</option>
+          </select>
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -797,7 +830,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Origem do dinheiro pra pagar</label>
+          <label class="form-label">Receita</label>
           <select class="form-select" id="c-origem">
             <option value="uber">🚗 Renda de app (Uber/99)</option>
             <option value="clt">💼 Renda Principal</option>
@@ -808,10 +841,14 @@
 
       <div class="card">
         <div class="card-title">Contas registradas <span id="count-contas">0</span></div>
-        <div style="margin-bottom:10px;">
-          <select class="form-select" id="filtro-contas-mes" onchange="renderContas()" style="width:100%;">
-            <option value="">Todos os meses</option>
-          </select>
+        <div style="display:flex; gap:6px; margin-bottom:10px;">
+          <button class="period-btn" id="cfiltro-semana" onclick="setContasFiltroTipo('semana')">Semana</button>
+          <button class="period-btn active" id="cfiltro-mes" onclick="setContasFiltroTipo('mes')">Mês</button>
+        </div>
+        <div style="display:flex; gap:6px; align-items:center; margin-bottom:10px;">
+          <button class="btn" style="padding:8px 10px; flex-shrink:0; width:auto;" onclick="mudarContasOffset(-1)">&#8592;</button>
+          <div style="flex:1; text-align:center; font-size:12.5px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="contas-periodo-label"></div>
+          <button class="btn" style="padding:8px 10px; flex-shrink:0; width:auto;" onclick="mudarContasOffset(1)">&#8594;</button>
         </div>
         <div id="lista-contas"><div class="empty"><div class="empty-icon">🧾</div>Nenhuma conta registrada ainda.</div></div>
       </div>
@@ -823,14 +860,10 @@
 
       <div class="card">
         <div class="card-title">Pendente</div>
-        <div class="metrics">
+        <div class="metrics" style="grid-template-columns:1fr;">
           <div class="metric">
             <div class="metric-label">Valor real</div>
             <div class="metric-value red" id="manut-total-real">R$ 0,00</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Preciso faturar</div>
-            <div class="metric-value" id="manut-total-uber" style="color:var(--gold);">R$ 0,00</div>
           </div>
         </div>
       </div>
@@ -842,17 +875,27 @@
         <div class="form-group">
           <label class="form-label">Tipo</label>
           <select class="form-select" id="mn-tipo" onchange="toggleCamposManut()">
-            <option value="manutencao">🔧 Manutenção (peça/serviço do carro)</option>
-            <option value="pendencia">🔘 Pendência (conforto, não obrigatório)</option>
+            <option value="preventiva">🔧 Manutenção Preventiva</option>
+            <option value="urgencia">🚨 Manutenção de Urgência</option>
+            <option value="acessorio">⚪ Acessório Opcional</option>
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Peça / serviço</label>
           <input class="form-input" type="text" id="mn-nome" placeholder="Ex: Troca de óleo, Pastilha de freio...">
         </div>
-        <div class="form-group">
-          <label class="form-label">Valor real (R$)</label>
-          <input class="form-input" type="number" id="mn-valor" placeholder="0,00" min="0" step="0.01" inputmode="decimal">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Valor real (R$)</label>
+            <input class="form-input" type="number" id="mn-valor" placeholder="0,00" min="0" step="0.01" inputmode="decimal">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="mn-status">
+              <option value="pendente">Pendente</option>
+              <option value="feita">Feito</option>
+            </select>
+          </div>
         </div>
         <div id="mn-campos-manutencao">
           <div class="form-group">
@@ -879,6 +922,11 @@
 
       <div class="card">
         <div class="card-title">Itens registrados <span id="count-manut">0</span></div>
+        <div style="display:flex; gap:6px; margin-bottom:12px;">
+          <button class="period-btn" id="mfiltro-semana" onclick="setFiltroPeriodoManut('semana')">Semana</button>
+          <button class="period-btn" id="mfiltro-mes" onclick="setFiltroPeriodoManut('mes')">Mês</button>
+          <button class="period-btn" id="mfiltro-ano" onclick="setFiltroPeriodoManut('ano')">Ano</button>
+        </div>
         <div id="lista-manutencao"><div class="empty"><div class="empty-icon">🔧</div>Nenhum item registrado ainda.</div></div>
       </div>
     </div>
@@ -915,7 +963,7 @@
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Horas</label>
-        <input class="form-input" type="number" id="eg-horas" min="0" step="0.1" inputmode="decimal">
+        <input class="form-input" type="text" id="eg-horas" placeholder="0:00:00" inputmode="numeric" oninput="mascararHoras(this)">
       </div>
       <div class="form-group">
         <label class="form-label">KM</label>
@@ -991,6 +1039,13 @@
       <label class="form-label">Nome da conta</label>
       <input class="form-input" type="text" id="ec-nome">
     </div>
+    <div class="form-group">
+      <label class="form-label">Tipo de conta</label>
+      <select class="form-select" id="ec-tipo-conta">
+        <option value="ocasional">Ocasional (só este mês)</option>
+        <option value="fixa">Fixa (repete todo mês)</option>
+      </select>
+    </div>
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Valor (R$)</label>
@@ -1022,13 +1077,17 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Origem do dinheiro pra pagar</label>
+      <label class="form-label">Receita</label>
       <select class="form-select" id="ec-origem">
         <option value="uber">🚗 Renda de app (Uber/99)</option>
         <option value="clt">💼 Renda Principal</option>
       </select>
     </div>
+    <div id="edit-conta-aviso-virtual" style="display:none; font-size:12px; color:var(--text2); background:var(--bg3); border-radius:var(--radius-sm); padding:10px; margin-bottom:10px;">
+      Esta é uma ocorrência de conta fixa neste mês — só é possível alterar o valor e o status aqui. Pra mudar nome, tipo, vencimento, banco ou receita, edite pelo mês original de cadastro.
+    </div>
     <input type="hidden" id="ec-id">
+    <input type="hidden" id="ec-mes-contexto">
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;">
       <button class="btn" onclick="closeEditContaModal()">Cancelar</button>
       <button class="btn btn-red" onclick="salvarEditConta()">Salvar</button>
@@ -1043,17 +1102,27 @@
     <div class="form-group">
       <label class="form-label">Tipo</label>
       <select class="form-select" id="emn-tipo" onchange="toggleCamposManutEdit()">
-        <option value="manutencao">🔧 Manutenção (peça/serviço do carro)</option>
-        <option value="pendencia">🔘 Pendência (conforto, não obrigatório)</option>
+        <option value="preventiva">🔧 Manutenção Preventiva</option>
+        <option value="urgencia">🚨 Manutenção de Urgência</option>
+        <option value="acessorio">⚪ Acessório Opcional</option>
       </select>
     </div>
     <div class="form-group">
       <label class="form-label">Peça / serviço</label>
       <input class="form-input" type="text" id="emn-nome">
     </div>
-    <div class="form-group">
-      <label class="form-label">Valor real (R$)</label>
-      <input class="form-input" type="number" id="emn-valor" min="0" step="0.01" inputmode="decimal">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Valor real (R$)</label>
+        <input class="form-input" type="number" id="emn-valor" min="0" step="0.01" inputmode="decimal">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="emn-status">
+          <option value="pendente">Pendente</option>
+          <option value="feita">Feito</option>
+        </select>
+      </div>
     </div>
     <div id="emn-campos-manutencao">
       <div class="form-group">
@@ -1499,6 +1568,7 @@ let lucroDiarioChart = null;
 let plataformaChart = null;
 let lucroMesChart = null;
 let consumoChart = null;
+let precisoFaturarChart = null;
 const PLATAFORMAS = ['Uber','99','InDriver','Cabify','Outra'];
 const PLAT_COLORS = { 'Uber':'#3fb950', '99':'#58a6ff', 'InDriver':'#d29922', 'Cabify':'#a371f7', 'Outra':'#8b949e' };
 
@@ -1589,6 +1659,14 @@ function renderTempoOn() {
   const elHojeCount = document.getElementById('tempoon-hoje-turnos');
   if (elHojeCount) elHojeCount.textContent = turnosHoje.length + (turnosHoje.length === 1 ? ' turno' : ' turnos');
 
+  const ganhosHoje = (state.ganhos || []).filter(function(g){ return g.data === hojeStr; });
+  const faturadoHoje = ganhosHoje.reduce(function(a,g){ return a + g.valor; }, 0);
+  const horasHoje = segHoje / 3600;
+  const elHojeFaturado = document.getElementById('tempoon-hoje-faturado');
+  if (elHojeFaturado) elHojeFaturado.textContent = fmt(faturadoHoje);
+  const elHojeRph = document.getElementById('tempoon-hoje-rph');
+  if (elHojeRph) elHojeRph.textContent = horasHoje > 0 ? fmt(faturadoHoje / horasHoje) : '-';
+
   const now = new Date();
   const diaSemana = (now.getDay() + 6) % 7; // 0 = segunda-feira
   const inicioSemana = new Date(now);
@@ -1598,6 +1676,14 @@ function renderTempoOn() {
   const segSemana = historico.filter(t => t.data >= inicioSemanaStr).reduce((a, t) => a + t.segundos, 0);
   const elSemana = document.getElementById('tempoon-semana-total');
   if (elSemana) elSemana.textContent = formatarHorasLegivel(segSemana / 3600);
+
+  const ganhosSemana = (state.ganhos || []).filter(function(g){ return g.data >= inicioSemanaStr; });
+  const faturadoSemana = ganhosSemana.reduce(function(a,g){ return a + g.valor; }, 0);
+  const horasSemana = segSemana / 3600;
+  const elSemanaFaturado = document.getElementById('tempoon-semana-faturado');
+  if (elSemanaFaturado) elSemanaFaturado.textContent = fmt(faturadoSemana);
+  const elSemanaRph = document.getElementById('tempoon-semana-rph');
+  if (elSemanaRph) elSemanaRph.textContent = horasSemana > 0 ? fmt(faturadoSemana / horasSemana) : '-';
 
   const listaEl = document.getElementById('lista-turnos');
   if (!listaEl) return;
@@ -1662,26 +1748,31 @@ function atualizarBotaoHorasHoje() {
 
 let horasVindoDoAcumulado = false;
 
-function atualizarLegendaHoras() {
+function mascararHoras(el) {
   horasVindoDoAcumulado = false;
-  const el = document.getElementById('g-horas-legenda');
-  const v = parseFloat(document.getElementById('g-horas').value);
-  if (v > 0) {
-    el.style.display = 'block';
-    el.textContent = '≈ ' + formatarHorasLegivel(v);
-  } else {
-    el.style.display = 'none';
-  }
+  el.value = el.value.replace(/[^0-9:]/g, '');
+}
+
+function horasStringParaDecimal(str) {
+  if (!str) return 0;
+  const partes = str.split(':').map(function(x){ return parseInt(x, 10) || 0; });
+  const h = partes[0] || 0, m = partes[1] || 0, s = partes[2] || 0;
+  return h + m / 60 + s / 3600;
+}
+
+function decimalParaHorasString(decimal) {
+  const totalSeg = Math.round((decimal || 0) * 3600);
+  const h = Math.floor(totalSeg / 3600);
+  const m = Math.floor((totalSeg % 3600) / 60);
+  const s = totalSeg % 60;
+  return h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
 }
 
 function usarHorasDeHoje() {
   const seg = horasNaoLancadasSeg();
   const horas = seg / 3600;
-  document.getElementById('g-horas').value = horas.toFixed(2);
+  document.getElementById('g-horas').value = decimalParaHorasString(horas);
   horasVindoDoAcumulado = true;
-  const el = document.getElementById('g-horas-legenda');
-  el.style.display = 'block';
-  el.textContent = '≈ ' + formatarHorasLegivel(horas);
   document.getElementById('g-horas-hoje-btn').style.display = 'none';
 }
 
@@ -1738,6 +1829,13 @@ function switchTab(t) {
 }
 
 // ---- GANHOS ----
+function toggleFormNovoGanho() {
+  const form = document.getElementById('form-novo-ganho');
+  const aberto = form.style.display !== 'none';
+  form.style.display = aberto ? 'none' : 'block';
+  document.getElementById('btn-abrir-novo-ganho').style.display = aberto ? 'block' : 'none';
+}
+
 function adicionarGanho() {
   const v = parseFloat(document.getElementById('g-valor').value);
   if (!v || v <= 0) { alert('Informe um valor válido.'); return; }
@@ -1746,7 +1844,7 @@ function adicionarGanho() {
     plataforma: document.getElementById('g-plataforma').value,
     data: document.getElementById('g-data').value || hoje(),
     corridas: parseInt(document.getElementById('g-corridas').value) || 0,
-    horas: parseFloat(document.getElementById('g-horas').value) || 0,
+    horas: horasStringParaDecimal(document.getElementById('g-horas').value),
     km: parseFloat(document.getElementById('g-km').value) || 0,
     obs: document.getElementById('g-obs').value
   });
@@ -1757,9 +1855,9 @@ function adicionarGanho() {
   document.getElementById('g-valor').value = '';
   document.getElementById('g-corridas').value = '';
   document.getElementById('g-horas').value = '';
-  atualizarLegendaHoras();
   document.getElementById('g-km').value = '';
   document.getElementById('g-obs').value = '';
+  toggleFormNovoGanho();
   save(); renderGanhos(); renderGastos(); renderDashboard(); atualizarBotaoHorasHoje();
   switchTab('dashboard');
 }
@@ -1887,7 +1985,7 @@ function editarGanho(id) {
   document.getElementById('eg-plataforma').value = g.plataforma;
   document.getElementById('eg-data').value = g.data;
   document.getElementById('eg-corridas').value = g.corridas || 0;
-  document.getElementById('eg-horas').value = g.horas || 0;
+  document.getElementById('eg-horas').value = decimalParaHorasString(g.horas || 0);
   document.getElementById('eg-km').value = g.km || 0;
   document.getElementById('eg-obs').value = g.obs || '';
   document.getElementById('edit-ganho-modal').classList.add('open');
@@ -1904,7 +2002,7 @@ function salvarEditGanho() {
   state.ganhos[idx].plataforma = document.getElementById('eg-plataforma').value;
   state.ganhos[idx].data = document.getElementById('eg-data').value;
   state.ganhos[idx].corridas = parseInt(document.getElementById('eg-corridas').value) || 0;
-  state.ganhos[idx].horas = parseFloat(document.getElementById('eg-horas').value) || 0;
+  state.ganhos[idx].horas = horasStringParaDecimal(document.getElementById('eg-horas').value);
   state.ganhos[idx].km = parseFloat(document.getElementById('eg-km').value) || 0;
   state.ganhos[idx].obs = document.getElementById('eg-obs').value;
   document.getElementById('edit-ganho-modal').classList.remove('open');
@@ -1978,13 +2076,16 @@ function adicionarConta() {
   state.contas.push({
     id: Date.now(),
     nome: nome,
+    tipoConta: document.getElementById('c-tipo-conta').value,
     valor: v,
     vencimento: venc,
     banco: document.getElementById('c-banco').value,
     origem: document.getElementById('c-origem').value,
-    status: document.getElementById('c-status').value
+    status: document.getElementById('c-status').value,
+    overrides: {}
   });
   document.getElementById('c-nome').value = '';
+  document.getElementById('c-tipo-conta').selectedIndex = 0;
   document.getElementById('c-valor').value = '';
   document.getElementById('c-vencimento').value = '';
   document.getElementById('c-banco').selectedIndex = 0;
@@ -1994,29 +2095,51 @@ function adicionarConta() {
   save(); renderContas();
 }
 
-function togglePagoConta(id) {
+function togglePagoConta(id, mes) {
   const c = state.contas.find(function(x){ return x.id === id; });
   if (!c) return;
-  c.status = c.status === 'pago' ? 'pendente' : 'pago';
+  const ehVirtual = mes && c.tipoConta === 'fixa' && mes !== (c.vencimento||'').slice(0,7);
+  if (ehVirtual) {
+    if (!c.overrides) c.overrides = {};
+    if (!c.overrides[mes]) c.overrides[mes] = {};
+    const atual = c.overrides[mes].status || 'pendente';
+    c.overrides[mes].status = atual === 'pago' ? 'pendente' : 'pago';
+  } else {
+    c.status = c.status === 'pago' ? 'pendente' : 'pago';
+  }
   save(); renderContas();
 }
 
-function removerConta(id) {
+function removerConta(id, mes) {
+  const c = state.contas.find(function(x){ return x.id === id; });
+  const ehVirtual = mes && c && c.tipoConta === 'fixa' && mes !== (c.vencimento||'').slice(0,7);
+  if (ehVirtual) {
+    alert('Essa é uma ocorrência de uma conta fixa. Pra ela parar de repetir, edite a conta original e mude o tipo pra "Ocasional", ou apague a conta original (isso remove todos os meses).');
+    return;
+  }
   if (!confirm('Remover esta conta?')) return;
   state.contas = state.contas.filter(function(x){ return x.id !== id; });
   save(); renderContas();
 }
 
-function editarConta(id) {
+function editarConta(id, mes) {
   const c = state.contas.find(function(x){ return x.id === id; });
   if (!c) return;
+  const ehVirtual = mes && c.tipoConta === 'fixa' && mes !== (c.vencimento||'').slice(0,7);
   document.getElementById('ec-id').value = id;
+  document.getElementById('ec-mes-contexto').value = ehVirtual ? mes : '';
   document.getElementById('ec-nome').value = c.nome;
-  document.getElementById('ec-valor').value = c.valor;
+  document.getElementById('ec-tipo-conta').value = c.tipoConta || 'ocasional';
+  const ov = (ehVirtual && c.overrides && c.overrides[mes]) || {};
+  document.getElementById('ec-valor').value = (ov.valor != null) ? ov.valor : c.valor;
   document.getElementById('ec-vencimento').value = c.vencimento;
   document.getElementById('ec-banco').value = c.banco || 'Outro';
   document.getElementById('ec-origem').value = c.origem || 'uber';
-  document.getElementById('ec-status').value = c.status || 'pendente';
+  document.getElementById('ec-status').value = ehVirtual ? (ov.status || 'pendente') : (c.status || 'pendente');
+  ['ec-nome','ec-tipo-conta','ec-vencimento','ec-banco','ec-origem'].forEach(function(fid){
+    document.getElementById(fid).disabled = !!ehVirtual;
+  });
+  document.getElementById('edit-conta-aviso-virtual').style.display = ehVirtual ? 'block' : 'none';
   document.getElementById('edit-conta-modal').classList.add('open');
 }
 
@@ -2027,14 +2150,27 @@ function closeEditContaModal(e) {
 
 function salvarEditConta() {
   const id = parseInt(document.getElementById('ec-id').value);
+  const mesContexto = document.getElementById('ec-mes-contexto').value;
   const idx = state.contas.findIndex(function(x){ return x.id === id; });
   if (idx === -1) return;
-  state.contas[idx].nome = document.getElementById('ec-nome').value.trim();
-  state.contas[idx].valor = parseFloat(document.getElementById('ec-valor').value) || state.contas[idx].valor;
-  state.contas[idx].vencimento = document.getElementById('ec-vencimento').value;
-  state.contas[idx].banco = document.getElementById('ec-banco').value;
-  state.contas[idx].origem = document.getElementById('ec-origem').value;
-  state.contas[idx].status = document.getElementById('ec-status').value;
+  const c = state.contas[idx];
+  if (mesContexto) {
+    if (!c.overrides) c.overrides = {};
+    if (!c.overrides[mesContexto]) c.overrides[mesContexto] = {};
+    c.overrides[mesContexto].valor = parseFloat(document.getElementById('ec-valor').value) || c.valor;
+    c.overrides[mesContexto].status = document.getElementById('ec-status').value;
+  } else {
+    c.nome = document.getElementById('ec-nome').value.trim();
+    c.tipoConta = document.getElementById('ec-tipo-conta').value;
+    c.valor = parseFloat(document.getElementById('ec-valor').value) || c.valor;
+    c.vencimento = document.getElementById('ec-vencimento').value;
+    c.banco = document.getElementById('ec-banco').value;
+    c.origem = document.getElementById('ec-origem').value;
+    c.status = document.getElementById('ec-status').value;
+  }
+  ['ec-nome','ec-tipo-conta','ec-vencimento','ec-banco','ec-origem'].forEach(function(fid){
+    document.getElementById(fid).disabled = false;
+  });
   document.getElementById('edit-conta-modal').classList.remove('open');
   save(); renderContas();
 }
@@ -2051,15 +2187,104 @@ function salvarMetaMensal() {
   save(); renderDashboard();
 }
 
-function renderContas() {
-  const todas = state.contas || [];
-  document.getElementById('count-contas').textContent = todas.length;
+var contasFiltroTipo = 'mes';
+var contasOffset = 0;
+const MESES_NOME_COMPLETO = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
-  const mesesSet = new Set(todas.map(function(c){ return c.vencimento && c.vencimento.slice(0,7); }).filter(Boolean));
-  const meses = Array.from(mesesSet).sort();
-  popularSeletorMeses('filtro-contas-mes', meses, true);
-  const mesSel = document.getElementById('filtro-contas-mes').value;
-  const lista = mesSel ? todas.filter(function(c){ return (c.vencimento||'').slice(0,7) === mesSel; }) : todas;
+function setContasFiltroTipo(tipo) {
+  contasFiltroTipo = tipo;
+  contasOffset = 0;
+  document.getElementById('cfiltro-semana').classList.toggle('active', tipo === 'semana');
+  document.getElementById('cfiltro-mes').classList.toggle('active', tipo === 'mes');
+  renderContas();
+}
+
+function mudarContasOffset(dir) {
+  contasOffset += dir;
+  renderContas();
+}
+
+function getContasRangeAtual() {
+  const hojeD = new Date();
+  if (contasFiltroTipo === 'semana') {
+    const diaSemana = (hojeD.getDay() + 6) % 7;
+    const inicio = new Date(hojeD);
+    inicio.setHours(0,0,0,0);
+    inicio.setDate(hojeD.getDate() - diaSemana + contasOffset * 7);
+    const fim = new Date(inicio);
+    fim.setDate(inicio.getDate() + 6);
+    fim.setHours(23,59,59,999);
+    const MESES_ABR3 = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+    const label = inicio.getDate() + ' de ' + MESES_ABR3[inicio.getMonth()] + ' a ' + fim.getDate() + ' de ' + MESES_ABR3[fim.getMonth()];
+    return { inicio: inicio, fim: fim, label: label };
+  } else {
+    const mesBase = new Date(hojeD.getFullYear(), hojeD.getMonth() + contasOffset, 1);
+    const inicio = new Date(mesBase.getFullYear(), mesBase.getMonth(), 1);
+    const fim = new Date(mesBase.getFullYear(), mesBase.getMonth()+1, 0, 23,59,59,999);
+    return { inicio: inicio, fim: fim, label: MESES_NOME_COMPLETO[mesBase.getMonth()] + ' ' + mesBase.getFullYear() };
+  }
+}
+
+function dataParaYMD(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function gerarOcorrenciasContasNoPeriodo(inicio, fim) {
+  const base = state.contas || [];
+  const inicioStr = dataParaYMD(inicio), fimStr = dataParaYMD(fim);
+  const mesesTocados = new Set();
+  let cursor = new Date(inicio.getFullYear(), inicio.getMonth(), 1);
+  const fimMes = new Date(fim.getFullYear(), fim.getMonth(), 1);
+  while (cursor <= fimMes) {
+    mesesTocados.add(cursor.getFullYear() + '-' + String(cursor.getMonth()+1).padStart(2,'0'));
+    cursor.setMonth(cursor.getMonth()+1);
+  }
+
+  const resultado = [];
+  base.forEach(function(c) {
+    const mesOriginal = (c.vencimento || '').slice(0,7);
+    if (c.tipoConta !== 'fixa') {
+      if (c.vencimento >= inicioStr && c.vencimento <= fimStr) {
+        resultado.push({ id: c.id, virtualMes: '', nome: c.nome, valor: c.valor, vencimento: c.vencimento, banco: c.banco, origem: c.origem, status: c.status, tipoConta: c.tipoConta });
+      }
+      return;
+    }
+    mesesTocados.forEach(function(ym) {
+      if (ym < mesOriginal) return;
+      if (ym === mesOriginal) {
+        if (c.vencimento >= inicioStr && c.vencimento <= fimStr) {
+          resultado.push({ id: c.id, virtualMes: '', nome: c.nome, valor: c.valor, vencimento: c.vencimento, banco: c.banco, origem: c.origem, status: c.status, tipoConta: c.tipoConta });
+        }
+        return;
+      }
+      const overrides = c.overrides || {};
+      const ov = overrides[ym] || {};
+      const diaOriginal = parseInt((c.vencimento||'01').slice(8,10), 10) || 1;
+      const partesYm = ym.split('-').map(Number);
+      const ultimoDiaMes = new Date(partesYm[0], partesYm[1], 0).getDate();
+      const dia = Math.min(diaOriginal, ultimoDiaMes);
+      const vencimentoVirtual = ym + '-' + String(dia).padStart(2,'0');
+      if (vencimentoVirtual >= inicioStr && vencimentoVirtual <= fimStr) {
+        resultado.push({
+          id: c.id, virtualMes: ym, nome: c.nome,
+          valor: (ov.valor != null) ? ov.valor : c.valor,
+          vencimento: vencimentoVirtual, banco: c.banco, origem: c.origem,
+          status: ov.status || 'pendente', tipoConta: 'fixa'
+        });
+      }
+    });
+  });
+  return resultado;
+}
+
+function renderContas() {
+  renderResumoFinanceiro();
+  const todasBase = state.contas || [];
+  document.getElementById('count-contas').textContent = todasBase.length;
+
+  const range = getContasRangeAtual();
+  document.getElementById('contas-periodo-label').textContent = range.label;
+  const lista = gerarOcorrenciasContasNoPeriodo(range.inicio, range.fim);
 
   const pendentes = lista.filter(function(c){ return c.status !== 'pago'; });
   const pagas = lista.filter(function(c){ return c.status === 'pago'; });
@@ -2077,16 +2302,17 @@ function renderContas() {
   function linhaConta(c) {
     const pago = c.status === 'pago';
     const clt = c.origem === 'clt';
+    const mesArg = "'" + c.virtualMes + "'";
     return '<div class="list-item" style="' + (pago ? 'opacity:0.55;' : '') + '">' +
-      '<div class="item-icon ' + (pago ? 'earn' : 'spend') + '" style="cursor:pointer;" onclick="togglePagoConta(' + c.id + ')">' + (pago ? '✅' : '🧾') + '</div>' +
-      '<div class="item-body" onclick="editarConta(' + c.id + ')" style="cursor:pointer;">' +
-        '<div class="item-name">' + c.nome + (clt ? ' <span style="font-size:11px; color:var(--text2);">💼 Renda Principal</span>' : '') + '</div>' +
+      '<div class="item-icon ' + (pago ? 'earn' : 'spend') + '" style="cursor:pointer;" onclick="togglePagoConta(' + c.id + ',' + mesArg + ')">' + (pago ? '✅' : '🧾') + '</div>' +
+      '<div class="item-body" onclick="editarConta(' + c.id + ',' + mesArg + ')" style="cursor:pointer;">' +
+        '<div class="item-name">' + c.nome + (clt ? ' <span style="font-size:11px; color:var(--text2);">💼 Renda Principal</span>' : '') + (c.tipoConta === 'fixa' ? ' <span style="font-size:11px; color:var(--text2);">🔁 fixa</span>' : '') + '</div>' +
         '<div class="item-meta">Vence ' + fmtData(c.vencimento) + (c.banco ? ' · ' + c.banco : '') + '</div>' +
-        (pago || clt ? '' : '<div style="font-size:12px; color:var(--gold); margin-top:2px;">Preciso faturar: ' + fmt(valorUber(c.valor)) + '</div>') +
+        (pago || clt ? '' : '<div style="font-size:12px; color:var(--gold); margin-top:2px;">Alvo: ' + fmt(valorUber(c.valor)) + '</div>') +
       '</div>' +
       '<div class="item-right">' +
         '<div class="item-amount amount-neg">' + fmt(c.valor) + '</div>' +
-        '<button class="item-del" onclick="removerConta(' + c.id + ')">✕</button>' +
+        '<button class="item-del" onclick="removerConta(' + c.id + ',' + mesArg + ')">✕</button>' +
       '</div>' +
     '</div>';
   }
@@ -2113,7 +2339,7 @@ function toggleFormNovaManut() {
 
 function toggleCamposManut() {
   const tipo = document.getElementById('mn-tipo').value;
-  document.getElementById('mn-campos-manutencao').style.display = tipo === 'manutencao' ? 'block' : 'none';
+  document.getElementById('mn-campos-manutencao').style.display = tipo !== 'acessorio' ? 'block' : 'none';
 }
 
 function adicionarManutencao() {
@@ -2129,9 +2355,9 @@ function adicionarManutencao() {
     nome: nome,
     valor: v,
     obs: document.getElementById('mn-obs').value.trim(),
-    status: 'pendente'
+    status: document.getElementById('mn-status').value
   };
-  if (tipo === 'manutencao') {
+  if (tipo !== 'acessorio') {
     item.data = document.getElementById('mn-data').value;
     item.kmAtual = parseFloat(document.getElementById('mn-km-atual').value) || null;
     item.kmProxima = parseFloat(document.getElementById('mn-km-proxima').value) || null;
@@ -2144,6 +2370,7 @@ function adicionarManutencao() {
   document.getElementById('mn-km-atual').value = '';
   document.getElementById('mn-km-proxima').value = '';
   document.getElementById('mn-tipo').selectedIndex = 0;
+  document.getElementById('mn-status').selectedIndex = 0;
   toggleFormNovaManut();
   save(); renderManutencao();
 }
@@ -2165,9 +2392,10 @@ function editarManutencao(id) {
   const m = state.manutencoes.find(function(x){ return x.id === id; });
   if (!m) return;
   document.getElementById('emn-id').value = id;
-  document.getElementById('emn-tipo').value = m.tipo || 'manutencao';
+  document.getElementById('emn-tipo').value = m.tipo || 'preventiva';
   document.getElementById('emn-nome').value = m.nome;
   document.getElementById('emn-valor').value = m.valor;
+  document.getElementById('emn-status').value = m.status || 'pendente';
   document.getElementById('emn-obs').value = m.obs || '';
   document.getElementById('emn-data').value = m.data || '';
   document.getElementById('emn-km-atual').value = m.kmAtual || '';
@@ -2178,7 +2406,7 @@ function editarManutencao(id) {
 
 function toggleCamposManutEdit() {
   const tipo = document.getElementById('emn-tipo').value;
-  document.getElementById('emn-campos-manutencao').style.display = tipo === 'manutencao' ? 'block' : 'none';
+  document.getElementById('emn-campos-manutencao').style.display = tipo !== 'acessorio' ? 'block' : 'none';
 }
 
 function closeEditManutModal(e) {
@@ -2194,8 +2422,9 @@ function salvarEditManutencao() {
   state.manutencoes[idx].tipo = tipo;
   state.manutencoes[idx].nome = document.getElementById('emn-nome').value.trim();
   state.manutencoes[idx].valor = parseFloat(document.getElementById('emn-valor').value) || state.manutencoes[idx].valor;
+  state.manutencoes[idx].status = document.getElementById('emn-status').value;
   state.manutencoes[idx].obs = document.getElementById('emn-obs').value.trim();
-  if (tipo === 'manutencao') {
+  if (tipo !== 'acessorio') {
     state.manutencoes[idx].data = document.getElementById('emn-data').value;
     state.manutencoes[idx].kmAtual = parseFloat(document.getElementById('emn-km-atual').value) || null;
     state.manutencoes[idx].kmProxima = parseFloat(document.getElementById('emn-km-proxima').value) || null;
@@ -2208,40 +2437,73 @@ function salvarEditManutencao() {
   save(); renderManutencao();
 }
 
+var filtroPeriodoManut = '';
+function setFiltroPeriodoManut(p) {
+  filtroPeriodoManut = (filtroPeriodoManut === p) ? '' : p;
+  ['semana','mes','ano'].forEach(function(x){
+    document.getElementById('mfiltro-'+x).classList.toggle('active', x === filtroPeriodoManut);
+  });
+  renderManutencao();
+}
+
+function itemNoFiltroPeriodo(m) {
+  if (!filtroPeriodoManut) return true;
+  if (m.tipo === 'acessorio' || !m.data) return true;
+  const hojeD = new Date();
+  const itemD = new Date(m.data + 'T00:00:00');
+  if (filtroPeriodoManut === 'ano') {
+    return itemD.getFullYear() === hojeD.getFullYear();
+  }
+  if (filtroPeriodoManut === 'mes') {
+    return itemD.getFullYear() === hojeD.getFullYear() && itemD.getMonth() === hojeD.getMonth();
+  }
+  if (filtroPeriodoManut === 'semana') {
+    const diaSemana = (hojeD.getDay() + 6) % 7;
+    const inicioSemana = new Date(hojeD);
+    inicioSemana.setHours(0,0,0,0);
+    inicioSemana.setDate(hojeD.getDate() - diaSemana);
+    const fimSemana = new Date(inicioSemana);
+    fimSemana.setDate(inicioSemana.getDate() + 6);
+    fimSemana.setHours(23,59,59,999);
+    return itemD >= inicioSemana && itemD <= fimSemana;
+  }
+  return true;
+}
+
 function renderManutencao() {
-  const todas = state.manutencoes || [];
-  document.getElementById('count-manut').textContent = todas.length;
+  const todasBruto = state.manutencoes || [];
+  document.getElementById('count-manut').textContent = todasBruto.length;
+  const todas = todasBruto.filter(itemNoFiltroPeriodo);
 
   const pendentesTodas = todas.filter(function(m){ return m.status !== 'feita'; });
   const totalReal = pendentesTodas.reduce(function(a,m){ return a + m.valor; }, 0);
-  const totalUber = pendentesTodas.reduce(function(a,m){ return a + valorUber(m.valor); }, 0);
   document.getElementById('manut-total-real').textContent = fmt(totalReal);
-  document.getElementById('manut-total-uber').textContent = fmt(totalUber);
 
   const el = document.getElementById('lista-manutencao');
   if (!todas.length) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">🔧</div>Nenhum item registrado ainda.</div>';
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🔧</div>Nenhum item neste período.</div>';
     return;
   }
 
   function linhaManut(m) {
     const feita = m.status === 'feita';
-    const ehManutencao = m.tipo !== 'pendencia';
+    const ehAcessorio = m.tipo === 'acessorio';
     let meta = '';
-    if (ehManutencao) {
+    if (!ehAcessorio) {
       const partes = [];
       if (m.data) partes.push(fmtData(m.data));
       if (m.kmAtual) partes.push(m.kmAtual + ' km atual');
       if (m.kmProxima) partes.push('próxima em ' + m.kmProxima + ' km');
       if (partes.length) meta = '<div class="item-meta">' + partes.join(' · ') + '</div>';
     }
+    const icone = feita ? '✅' : (m.tipo === 'urgencia' ? '🚨' : (ehAcessorio ? '⚪' : '🔧'));
     return '<div class="list-item" style="' + (feita ? 'opacity:0.55;' : '') + '">' +
-      '<div class="item-icon ' + (feita ? 'earn' : 'spend') + '" style="cursor:pointer;" onclick="toggleFeitaManutencao(' + m.id + ')">' + (feita ? '✅' : (ehManutencao ? '🔧' : '🔘')) + '</div>' +
+      '<div class="item-icon ' + (feita ? 'earn' : 'spend') + '" style="cursor:pointer;" onclick="toggleFeitaManutencao(' + m.id + ')">' + icone + '</div>' +
       '<div class="item-body" onclick="editarManutencao(' + m.id + ')" style="cursor:pointer;">' +
         '<div class="item-name">' + m.nome + '</div>' +
         meta +
         (m.obs ? '<div class="item-meta">' + m.obs + '</div>' : '') +
-        (feita ? '' : '<div style="font-size:12px; color:var(--gold); margin-top:2px;">Preciso faturar: ' + fmt(valorUber(m.valor)) + '</div>') +
+        (feita ? '' : '<div style="font-size:12px; color:var(--gold); margin-top:2px;">Alvo: ' + fmt(valorUber(m.valor)) + '</div>') +
       '</div>' +
       '<div class="item-right">' +
         '<div class="item-amount amount-neg">' + fmt(m.valor) + '</div>' +
@@ -2250,8 +2512,8 @@ function renderManutencao() {
     '</div>';
   }
 
-  const manuts = todas.filter(function(m){ return m.tipo !== 'pendencia'; });
-  const pendencias = todas.filter(function(m){ return m.tipo === 'pendencia'; });
+  const manuts = todas.filter(function(m){ return m.tipo !== 'acessorio' && m.tipo !== 'pendencia'; });
+  const acessorios = todas.filter(function(m){ return m.tipo === 'acessorio' || m.tipo === 'pendencia'; });
 
   function blocoStatus(lista) {
     const pend = lista.filter(function(m){ return m.status !== 'feita'; });
@@ -2267,8 +2529,8 @@ function renderManutencao() {
   let html = '';
   html += '<div style="font-size:13px; font-weight:700; color:var(--text); margin-bottom:8px;">🔧 MANUTENÇÕES</div>';
   html += manuts.length ? blocoStatus(manuts) : '<div class="empty" style="padding:14px 0;">Nenhuma manutenção registrada.</div>';
-  html += '<div style="font-size:13px; font-weight:700; color:var(--text); margin:22px 0 8px; padding-top:14px; border-top:1px solid var(--border);">🔘 PENDÊNCIAS</div>';
-  html += pendencias.length ? blocoStatus(pendencias) : '<div class="empty" style="padding:14px 0;">Nenhuma pendência registrada.</div>';
+  html += '<div style="font-size:13px; font-weight:700; color:var(--text); margin:22px 0 8px; padding-top:14px; border-top:1px solid var(--border);">⚪ ACESSÓRIOS OPCIONAIS</div>';
+  html += acessorios.length ? blocoStatus(acessorios) : '<div class="empty" style="padding:14px 0;">Nenhum acessório registrado.</div>';
   el.innerHTML = html;
 }
 
@@ -2315,10 +2577,14 @@ function renderPainelLista(fg, fe) {
 }
 
 function renderResumoFinanceiro() {
+  const mesAtualD = new Date();
+  const inicioMesAtual = new Date(mesAtualD.getFullYear(), mesAtualD.getMonth(), 1);
+  const fimMesAtual = new Date(mesAtualD.getFullYear(), mesAtualD.getMonth()+1, 0, 23,59,59,999);
+  const ocorrenciasMesAtual = gerarOcorrenciasContasNoPeriodo(inicioMesAtual, fimMesAtual);
   const mesAtual = hoje().slice(0,7);
 
   const rendaPrincipal = (state.rendas || []).find(function(r){ return r.principal; });
-  const contasCLTmes = (state.contas || []).filter(function(c){ return c.origem === 'clt' && (c.vencimento||'').slice(0,7) === mesAtual; });
+  const contasCLTmes = ocorrenciasMesAtual.filter(function(c){ return c.origem === 'clt'; });
   const totalCLT = contasCLTmes.reduce(function(a,c){ return a + c.valor; }, 0);
   const sobra = (rendaPrincipal ? rendaPrincipal.valor : 0) - totalCLT;
   const elSobra = document.getElementById('painel-sobra');
@@ -2332,7 +2598,59 @@ function renderResumoFinanceiro() {
   const elFaturado = document.getElementById('painel-faturado');
   if (elFaturado) elFaturado.textContent = fmt(totalFaturado);
 
+  const gastosMes = (state.gastos || []).filter(function(g){ return (g.data||'').slice(0,7) === mesAtual; });
+  const totalGastosMes = gastosMes.reduce(function(a,g){ return a + g.valor; }, 0);
+  const liquido = totalFaturado - totalGastosMes;
+  const elLiquido = document.getElementById('painel-liquido');
+  if (elLiquido) {
+    elLiquido.textContent = fmt(liquido);
+    elLiquido.className = 'metric-value ' + (liquido >= 0 ? 'green' : 'red');
+  }
+
+  const boletosMes = ocorrenciasMesAtual.filter(function(c){ return c.status !== 'pago'; });
+  const totalBoletos = boletosMes.reduce(function(a,c){ return a + c.valor; }, 0);
+  const elBoletos = document.getElementById('painel-boletos');
+  if (elBoletos) elBoletos.textContent = fmt(totalBoletos);
+
+  const contasUberPendentesMes = ocorrenciasMesAtual.filter(function(c){ return c.origem !== 'clt' && c.status !== 'pago'; });
+  const totalPrecisoFaturar = contasUberPendentesMes.reduce(function(a,c){ return a + valorUber(c.valor); }, 0);
+  renderPrecisoFaturarChart(totalPrecisoFaturar, totalFaturado);
+
   renderMetaMensal(totalFaturado);
+}
+
+function renderPrecisoFaturarChart(precisoFaturar, jaFaturado) {
+  const canvas = document.getElementById('preciso-faturar-chart');
+  if (!canvas) return;
+  if (precisoFaturarChart) { precisoFaturarChart.destroy(); precisoFaturarChart = null; }
+  precisoFaturarChart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: ['Já faturei', 'Alvo do mês'],
+      datasets: [{ data: [jaFaturado, precisoFaturar], backgroundColor: ['#34c98f', '#d4af6a'], borderRadius: 6, barThickness: 18 }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      animation: { duration: 600, easing: 'easeOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#161b22', borderColor: 'rgba(255,255,255,0.14)', borderWidth: 1,
+          titleColor: '#e6edf3', bodyColor: '#e6edf3', padding: 10,
+          callbacks: { label: ctx => fmt(ctx.raw) }
+        },
+        datalabels: {
+          display: true, anchor: 'end', align: 'end', color: '#e6edf3', font: { size: 10, weight: '600' },
+          formatter: v => fmt(v)
+        }
+      },
+      layout: { padding: { right: 56 } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font: { size: 10 }, callback: v => fmt(v) } },
+        y: { grid: { display: false }, ticks: { color: '#e6edf3', font: { size: 11 } } }
+      }
+    }
+  });
 }
 
 function renderMetaMensal(totalFaturadoMes) {
@@ -2362,7 +2680,6 @@ function renderMetaMensal(totalFaturadoMes) {
 }
 
 function renderDashboard() {
-  renderResumoFinanceiro();
   popularSeletorMeses('filtro-mes', mesesUnicos([...state.ganhos, ...state.gastos]), false);
   const fg = filteredGanhos();
   const fe = filteredGastos();
@@ -2855,14 +3172,6 @@ function limparTudo() {
 // ---- PERIODO ----
 let currentPeriod = 'semana';
 var semanaOffset = 0;
-
-function toggleDetalhesPainel() {
-  const el = document.getElementById('painel-detalhes');
-  const btn = document.getElementById('btn-ver-detalhes');
-  const aberto = el.style.display !== 'none';
-  el.style.display = aberto ? 'none' : 'block';
-  btn.textContent = aberto ? 'Ver detalhes ▾' : 'Ocultar detalhes ▴';
-}
 
 function setPeriod(p) {
   currentPeriod = p;
