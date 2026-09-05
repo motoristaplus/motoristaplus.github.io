@@ -179,8 +179,6 @@
   .content::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
   /* Install hint */
-  .install-hint { background: var(--blue-bg); border: 1px solid rgba(88,166,255,0.2); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 14px; font-size: 12px; color: var(--blue); display: flex; gap: 10px; align-items: flex-start; }
-  .install-hint-close { margin-left: auto; cursor: pointer; opacity: 0.7; background: none; border: none; color: var(--blue); font-size: 16px; padding: 0; flex-shrink: 0; }
 
   /* Chart cards */
   .chart-wrap { position: relative; width: 100%; }
@@ -276,6 +274,9 @@
     <button class="menu-item" onclick="switchTab('historico'); fecharMenu();"><span class="menu-item-icon">📋</span>Histórico</button>
     <div style="flex:1;"></div>
     <div style="border-top:1px solid var(--border); margin:8px 0;"></div>
+    <button class="menu-item" onclick="abrirAjuda()"><span class="menu-item-icon">💬</span>Ajuda</button>
+    <button class="menu-item" onclick="abrirDicas()"><span class="menu-item-icon">💡</span>Dicas</button>
+    <div style="border-top:1px solid var(--border); margin:8px 0;"></div>
     <button class="menu-item" onclick="abrirConfiguracoes()"><span class="menu-item-icon">⚙️</span>Configurações</button>
     <button class="menu-item" onclick="fecharMenu(); sair();"><span class="menu-item-icon">🚪</span>Sair</button>
   </div>
@@ -369,6 +370,60 @@
   </div>
 </div>
 
+<!-- MODAL AJUDA -->
+<div class="modal-overlay" id="ajuda-modal" onclick="closeAjudaModal(event)">
+  <div class="modal">
+    <div class="modal-title">💬 Ajuda</div>
+    <div style="font-size:13px; color:var(--gold); background:var(--amber-bg); border:1px solid var(--gold); border-radius:var(--radius-sm); padding:12px; margin-bottom:14px;">
+      🚧 Em desenvolvimento — o envio ainda não está ativo, depois eu crio a conta.
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nome</label>
+      <input class="form-input" type="text" id="ajuda-nome" placeholder="Seu nome">
+    </div>
+    <div class="form-group">
+      <label class="form-label">E-mail</label>
+      <input class="form-input" type="email" id="ajuda-email" placeholder="seu@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Telefone (opcional)</label>
+      <input class="form-input" type="tel" id="ajuda-telefone" placeholder="(00) 00000-0000">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mensagem</label>
+      <textarea class="form-input" id="ajuda-mensagem" rows="4" placeholder="Conta o que está acontecendo..." style="resize:vertical;"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Anexar algo (opcional)</label>
+      <input class="form-input" type="file" id="ajuda-anexo" accept="image/*,.pdf">
+    </div>
+    <div id="ajuda-erro" style="color:var(--red); font-size:12px; margin-bottom:10px; display:none;"></div>
+    <div id="ajuda-sucesso" style="color:var(--green); font-size:12px; margin-bottom:10px; display:none;"></div>
+    <button class="btn btn-red" id="ajuda-btn-enviar" onclick="enviarAjuda()">✓ &nbsp;Enviar mensagem</button>
+    <button class="btn btn-ghost" style="margin-top:10px;" onclick="closeAjudaModal()">Fechar</button>
+  </div>
+</div>
+
+<!-- MODAL DICAS -->
+<div class="modal-overlay" id="dicas-modal" onclick="closeDicasModal(event)">
+  <div class="modal">
+    <div class="modal-title">💡 Dicas</div>
+    <div style="font-size:14px; color:var(--text); line-height:1.6; max-height:60vh; overflow-y:auto;">
+      <p><strong>🚗 Meu Controle</strong> — o coração do app: Painel, Ganhos, Gastos e Expediente. É onde você registra o dia a dia de motorista.</p>
+      <p><strong>📊 Painel</strong> — visão geral por Dia/Semana/Mês/Ano. Toque nos botões pra trocar o período e ver corridas, horas, KM e R$/hora daquele recorte.</p>
+      <p><strong>🎯 Metas</strong> — defina sua meta semanal (toque em Configurações) e mensal. A barra enche conforme você fatura, sem cobrar, só mostrando progresso.</p>
+      <p><strong>💰 Ganhos</strong> — toque em "Registrar ganho" pra abrir o formulário. O campo de horas aceita o formato H:MM:SS, igual um cronômetro.</p>
+      <p><strong>⏱️ Expediente</strong> — bata o ponto no início e no fim do turno. O app soma tudo sozinho e mostra quanto rendeu por hora trabalhada.</p>
+      <p><strong>🧾 Contas a Pagar</strong> — cadastre suas contas marcando se são Fixas (repetem todo mês automaticamente) ou Ocasionais (só naquele mês). Marque também se vai pagar com Renda Principal ou com o que ganhar nos apps — isso muda o cálculo do "Alvo do mês".</p>
+      <p><strong>🔧 Manutenção do Carro</strong> — controle peças e serviços do carro, separados entre Manutenções (com data e KM) e Acessórios Opcionais (sem data, tipo conforto).</p>
+      <p><strong>💵 Renda</strong> — em Configurações, cadastre suas fontes de renda e marque uma como principal. Isso alimenta o cálculo de "Saldo Renda Principal" no Bem-vindo.</p>
+      <p><strong>👤 Meu Perfil</strong> — troque sua senha quando quiser, com segurança (sempre pede a senha atual antes).</p>
+      <p><strong>☁️ Seus dados</strong> — tudo fica salvo na nuvem, vinculado à sua conta. Pode trocar de aparelho sem perder nada, só fazendo login de novo.</p>
+    </div>
+    <button class="btn btn-ghost" style="margin-top:16px;" onclick="closeDicasModal()">Fechar</button>
+  </div>
+</div>
+
 <div class="app" id="app-root" style="display:none;">
   <div class="header">
     <div class="header-top">
@@ -434,11 +489,6 @@
           <div style="flex:1; text-align:center; font-size:12.5px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="semana-label"></div>
           <button class="btn" style="padding:8px 10px; flex-shrink:0; width:auto;" onclick="mudarSemana(1)">&#8594;</button>
         </div>
-      </div>
-
-      <div id="install-hint" class="install-hint" style="margin-top:4px;">
-        <span>💡 <strong>Dica:</strong> No Chrome, toque em "⋮" → "Adicionar à tela inicial" para instalar como app.</span>
-        <button class="install-hint-close" onclick="document.getElementById('install-hint').style.display='none'">✕</button>
       </div>
 
       <div class="metrics">
@@ -767,6 +817,9 @@
           <div class="chart-wrap" style="height:70px;">
             <canvas id="preciso-faturar-chart"></canvas>
           </div>
+        </div>
+        <div style="text-align:center; margin-top:16px;">
+          <a href="#" onclick="abrirAjuda(); return false;" style="color:var(--text2); font-size:12px; text-decoration:underline;">Entre em contato com o suporte</a>
         </div>
       </div>
 
@@ -1351,6 +1404,86 @@ function abrirConfiguracoes() {
 function closeConfigModal(e) {
   if (!e || e.target === document.getElementById('config-modal'))
     document.getElementById('config-modal').classList.remove('open');
+}
+
+// ---- AJUDA ----
+function abrirAjuda() {
+  fecharMenu();
+  document.getElementById('ajuda-erro').style.display = 'none';
+  document.getElementById('ajuda-sucesso').style.display = 'none';
+  if (currentUser && currentUser.email) {
+    document.getElementById('ajuda-email').value = currentUser.email;
+  }
+  document.getElementById('ajuda-modal').classList.add('open');
+}
+
+function closeAjudaModal(e) {
+  if (!e || e.target === document.getElementById('ajuda-modal'))
+    document.getElementById('ajuda-modal').classList.remove('open');
+}
+
+function mostrarErroAjuda(msg) {
+  const el = document.getElementById('ajuda-erro');
+  el.textContent = msg;
+  el.style.display = 'block';
+  document.getElementById('ajuda-sucesso').style.display = 'none';
+}
+
+function enviarAjuda() {
+  const nome = document.getElementById('ajuda-nome').value.trim();
+  const email = document.getElementById('ajuda-email').value.trim();
+  const telefone = document.getElementById('ajuda-telefone').value.trim();
+  const mensagem = document.getElementById('ajuda-mensagem').value.trim();
+  const anexo = document.getElementById('ajuda-anexo').files[0];
+
+  if (!nome || !email || !mensagem) { mostrarErroAjuda('Preencha nome, e-mail e mensagem.'); return; }
+
+  document.getElementById('ajuda-erro').style.display = 'none';
+  const btn = document.getElementById('ajuda-btn-enviar');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  const formData = new FormData();
+  formData.append('nome', nome);
+  formData.append('email', email);
+  formData.append('telefone', telefone);
+  formData.append('mensagem', mensagem);
+  formData.append('_replyto', email);
+  if (anexo) formData.append('anexo', anexo);
+
+  fetch('https://formspree.io/f/SEU_FORM_ID_AQUI', {
+    method: 'POST',
+    headers: { 'Accept': 'application/json' },
+    body: formData
+  }).then(function (resp) {
+    btn.disabled = false;
+    btn.textContent = '✓ Enviar mensagem';
+    if (resp.ok) {
+      document.getElementById('ajuda-sucesso').style.display = 'block';
+      document.getElementById('ajuda-sucesso').textContent = 'Mensagem enviada! Vou te responder por e-mail em breve.';
+      document.getElementById('ajuda-nome').value = '';
+      document.getElementById('ajuda-telefone').value = '';
+      document.getElementById('ajuda-mensagem').value = '';
+      document.getElementById('ajuda-anexo').value = '';
+    } else {
+      mostrarErroAjuda('Não foi possível enviar. Tente de novo, ou manda direto pra rogerio.the@outlook.com.');
+    }
+  }).catch(function () {
+    btn.disabled = false;
+    btn.textContent = '✓ Enviar mensagem';
+    mostrarErroAjuda('Sem conexão. Tente de novo, ou manda direto pra rogerio.the@outlook.com.');
+  });
+}
+
+// ---- DICAS ----
+function abrirDicas() {
+  fecharMenu();
+  document.getElementById('dicas-modal').classList.add('open');
+}
+
+function closeDicasModal(e) {
+  if (!e || e.target === document.getElementById('dicas-modal'))
+    document.getElementById('dicas-modal').classList.remove('open');
 }
 
 function adicionarRenda() {
