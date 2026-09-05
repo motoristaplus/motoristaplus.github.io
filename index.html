@@ -929,7 +929,7 @@
           <label class="form-label">Tipo</label>
           <select class="form-select" id="mn-tipo" onchange="toggleCamposManut()">
             <option value="preventiva">🔧 Manutenção Preventiva</option>
-            <option value="urgencia">🚨 Manutenção de Urgência</option>
+            <option value="urgencia">🚨 Manutenção Corretiva</option>
             <option value="acessorio">⚪ Acessório Opcional</option>
           </select>
         </div>
@@ -1156,7 +1156,7 @@
       <label class="form-label">Tipo</label>
       <select class="form-select" id="emn-tipo" onchange="toggleCamposManutEdit()">
         <option value="preventiva">🔧 Manutenção Preventiva</option>
-        <option value="urgencia">🚨 Manutenção de Urgência</option>
+        <option value="urgencia">🚨 Manutenção Corretiva</option>
         <option value="acessorio">⚪ Acessório Opcional</option>
       </select>
     </div>
@@ -2647,23 +2647,17 @@ function renderManutencao() {
 
   const manuts = todas.filter(function(m){ return m.tipo !== 'acessorio' && m.tipo !== 'pendencia'; });
   const acessorios = todas.filter(function(m){ return m.tipo === 'acessorio' || m.tipo === 'pendencia'; });
-
-  function blocoStatus(lista) {
-    const pend = lista.filter(function(m){ return m.status !== 'feita'; });
-    const feitas = lista.filter(function(m){ return m.status === 'feita'; });
-    let h = '';
-    h += '<div style="font-size:12px; font-weight:600; color:var(--red); margin-bottom:6px;">🔴 PENDENTES (' + pend.length + ')</div>';
-    h += pend.length ? pend.map(linhaManut).join('') : '<div class="empty" style="padding:14px 0;">Nenhum item pendente. 🎉</div>';
-    h += '<div style="font-size:12px; font-weight:600; color:var(--green); margin:16px 0 6px;">✅ FEITAS (' + feitas.length + ')</div>';
-    h += feitas.length ? feitas.map(linhaManut).join('') : '<div class="empty" style="padding:14px 0;">Nenhum item feito ainda.</div>';
-    return h;
-  }
+  const manutsPendentes = manuts.filter(function(m){ return m.status !== 'feita'; });
+  const acessoriosPendentes = acessorios.filter(function(m){ return m.status !== 'feita'; });
+  const todasRealizadas = todas.filter(function(m){ return m.status === 'feita'; });
 
   let html = '';
-  html += '<div style="font-size:13px; font-weight:700; color:var(--text); margin-bottom:8px;">🔧 MANUTENÇÕES</div>';
-  html += manuts.length ? blocoStatus(manuts) : '<div class="empty" style="padding:14px 0;">Nenhuma manutenção registrada.</div>';
-  html += '<div style="font-size:13px; font-weight:700; color:var(--text); margin:22px 0 8px; padding-top:14px; border-top:1px solid var(--border);">⚪ ACESSÓRIOS OPCIONAIS</div>';
-  html += acessorios.length ? blocoStatus(acessorios) : '<div class="empty" style="padding:14px 0;">Nenhum acessório registrado.</div>';
+  html += '<div style="font-size:13px; font-weight:700; color:var(--red); margin-bottom:8px;">🔧 MANUTENÇÕES</div>';
+  html += manutsPendentes.length ? manutsPendentes.map(linhaManut).join('') : '<div class="empty" style="padding:14px 0;">Nenhum item pendente. 🎉</div>';
+  html += '<div style="font-size:13px; font-weight:700; color:var(--red); margin:22px 0 8px; padding-top:14px; border-top:1px solid var(--border);">⚪ ACESSÓRIOS OPCIONAIS</div>';
+  html += acessoriosPendentes.length ? acessoriosPendentes.map(linhaManut).join('') : '<div class="empty" style="padding:14px 0;">Nenhum item pendente. 🎉</div>';
+  html += '<div style="font-size:13px; font-weight:700; color:var(--green); margin:22px 0 8px; padding-top:14px; border-top:1px solid var(--border);">✅ MANUTENÇÕES REALIZADAS</div>';
+  html += todasRealizadas.length ? todasRealizadas.map(linhaManut).join('') : '<div class="empty" style="padding:14px 0;">Nenhum item realizado ainda.</div>';
   el.innerHTML = html;
 }
 
