@@ -409,16 +409,16 @@
   <div class="modal">
     <div class="modal-title">💡 Dicas</div>
     <div style="font-size:14px; color:var(--text); line-height:1.6; max-height:60vh; overflow-y:auto;">
-      <p><strong>🚗 Meu Controle</strong> — o coração do app: Painel, Ganhos, Gastos e Expediente. É onde você registra o dia a dia de motorista.</p>
-      <p><strong>📊 Painel</strong> — visão geral por Dia/Semana/Mês/Ano. Toque nos botões pra trocar o período e ver corridas, horas, KM e R$/hora daquele recorte.</p>
-      <p><strong>🎯 Metas</strong> — defina sua meta semanal (toque em Configurações) e mensal. A barra enche conforme você fatura, sem cobrar, só mostrando progresso.</p>
-      <p><strong>💰 Ganhos</strong> — toque em "Registrar ganho" pra abrir o formulário. O campo de horas aceita o formato H:MM:SS, igual um cronômetro.</p>
-      <p><strong>⏱️ Expediente</strong> — bata o ponto no início e no fim do turno. O app soma tudo sozinho e mostra quanto rendeu por hora trabalhada.</p>
-      <p><strong>🧾 Contas a Pagar</strong> — cadastre suas contas marcando se são Fixas (repetem todo mês automaticamente) ou Ocasionais (só naquele mês). Marque também se vai pagar com Renda Principal ou com o que ganhar nos apps — isso muda o cálculo do "Alvo do mês".</p>
-      <p><strong>🔧 Manutenção do Carro</strong> — controle peças e serviços do carro, separados entre Manutenções (com data e KM) e Acessórios Opcionais (sem data, tipo conforto).</p>
-      <p><strong>💵 Renda</strong> — em Configurações, cadastre suas fontes de renda e marque uma como principal. Isso alimenta o cálculo de "Saldo Renda Principal" no Bem-vindo.</p>
-      <p><strong>👤 Meu Perfil</strong> — troque sua senha quando quiser, com segurança (sempre pede a senha atual antes).</p>
-      <p><strong>☁️ Seus dados</strong> — tudo fica salvo na nuvem, vinculado à sua conta. Pode trocar de aparelho sem perder nada, só fazendo login de novo.</p>
+      <p style="margin-bottom:16px;"><strong>🚗 Meu Controle</strong> — o coração do app: Painel, Ganhos, Gastos e Expediente. É onde você registra o dia a dia de motorista.</p>
+      <p style="margin-bottom:16px;"><strong>📊 Painel</strong> — visão geral por Dia/Semana/Mês/Ano. Toque nos botões pra trocar o período e ver corridas, horas, KM e R$/hora daquele recorte.</p>
+      <p style="margin-bottom:16px;"><strong>🎯 Metas</strong> — defina sua meta semanal (toque em Configurações) e mensal. A barra enche conforme você fatura, sem cobrar, só mostrando progresso.</p>
+      <p style="margin-bottom:16px;"><strong>💰 Ganhos</strong> — toque em "Registrar ganho" pra abrir o formulário. O campo de horas aceita o formato H:MM:SS, igual um cronômetro.</p>
+      <p style="margin-bottom:16px;"><strong>⏱️ Expediente</strong> — bata o ponto no início e no fim do turno. O app soma tudo sozinho e mostra quanto rendeu por hora trabalhada.</p>
+      <p style="margin-bottom:16px;"><strong>🧾 Contas a Pagar</strong> — cadastre suas contas marcando se são Fixas (repetem todo mês automaticamente) ou Ocasionais (só naquele mês). Marque também se vai pagar com Renda Principal ou com o que ganhar nos apps — isso muda o cálculo do "Alvo do mês".</p>
+      <p style="margin-bottom:16px;"><strong>🔧 Manutenção do Carro</strong> — controle peças e serviços do carro, separados entre Manutenções (com data e KM) e Acessórios Opcionais (sem data, tipo conforto).</p>
+      <p style="margin-bottom:16px;"><strong>💵 Renda</strong> — em Configurações, cadastre suas fontes de renda e marque uma como principal. Isso alimenta o cálculo de "Saldo Renda Principal" no Bem-vindo.</p>
+      <p style="margin-bottom:16px;"><strong>👤 Meu Perfil</strong> — troque sua senha quando quiser, com segurança (sempre pede a senha atual antes).</p>
+      <p style="margin-bottom:0;"><strong>☁️ Seus dados</strong> — tudo fica salvo na nuvem, vinculado à sua conta. Pode trocar de aparelho sem perder nada, só fazendo login de novo.</p>
     </div>
     <button class="btn btn-ghost" style="margin-top:16px;" onclick="closeDicasModal()">Fechar</button>
   </div>
@@ -615,9 +615,7 @@
 
     <!-- GANHOS -->
     <div id="tab-ganhos" class="section">
-      <button class="btn btn-green" id="btn-abrir-novo-ganho" onclick="toggleFormNovoGanho()" style="margin-bottom:14px;">✓ &nbsp;Registrar ganho</button>
-
-      <div class="card" id="form-novo-ganho" style="display:none;">
+      <div class="card" id="form-novo-ganho">
         <div class="card-title">Registrar ganho</div>
         <div class="form-row">
           <div class="form-group">
@@ -688,6 +686,8 @@
               <option value="seguro">🛡️ Seguro / IPVA</option>
               <option value="alimentacao">🍽️ Alimentação</option>
               <option value="lavagem">🚿 Lavagem</option>
+              <option value="passe_uber">🚗 Passe Uber</option>
+              <option value="passe_99">🚗 Passe 99</option>
               <option value="outro">📦 Outro</option>
             </select>
           </div>
@@ -817,9 +817,6 @@
           <div class="chart-wrap" style="height:70px;">
             <canvas id="preciso-faturar-chart"></canvas>
           </div>
-        </div>
-        <div style="text-align:center; margin-top:16px;">
-          <a href="#" onclick="abrirAjuda(); return false;" style="color:var(--text2); font-size:12px; text-decoration:underline;">Entre em contato com o suporte</a>
         </div>
       </div>
 
@@ -1052,6 +1049,8 @@
           <option value="seguro">🛡️ Seguro / IPVA</option>
           <option value="alimentacao">🍽️ Alimentação</option>
           <option value="lavagem">🚿 Lavagem</option>
+          <option value="passe_uber">🚗 Passe Uber</option>
+          <option value="passe_99">🚗 Passe 99</option>
           <option value="outro">📦 Outro</option>
         </select>
       </div>
@@ -1235,9 +1234,9 @@ if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
 }
 const DIAS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const CATS = { gas:'Combustível', manut:'Manutenção', seguro:'Seguro/IPVA', alimentacao:'Alimentação', lavagem:'Lavagem', outro:'Outro' };
-const CAT_EMOJI = { gas:'⛽', manut:'🔧', seguro:'🛡️', alimentacao:'🍽️', lavagem:'🚿', outro:'📦' };
-const CAT_COLORS = { gas:'#d29922', manut:'#f85149', seguro:'#58a6ff', alimentacao:'#3fb950', lavagem:'#a5d6ff', outro:'#8b949e' };
-const CAT_BADGE = { gas:'badge-amber', manut:'badge-red', seguro:'badge-blue', alimentacao:'badge-green', lavagem:'badge-blue', outro:'badge-gray' };
+const CAT_EMOJI = { gas:'⛽', manut:'🔧', seguro:'🛡️', alimentacao:'🍽️', lavagem:'🚿', passe_uber:'🚗', passe_99:'🚗', outro:'📦' };
+const CAT_COLORS = { gas:'#d29922', manut:'#f85149', seguro:'#58a6ff', alimentacao:'#3fb950', lavagem:'#a5d6ff', passe_uber:'#2fc6d4', passe_99:'#d4af6a', outro:'#8b949e' };
+const CAT_BADGE = { gas:'badge-amber', manut:'badge-red', seguro:'badge-blue', alimentacao:'badge-green', lavagem:'badge-blue', passe_uber:'badge-blue', passe_99:'badge-amber', outro:'badge-gray' };
 
 const DEFAULT_STATE = {
   meta: null,
@@ -1962,13 +1961,6 @@ function switchTab(t) {
 }
 
 // ---- GANHOS ----
-function toggleFormNovoGanho() {
-  const form = document.getElementById('form-novo-ganho');
-  const aberto = form.style.display !== 'none';
-  form.style.display = aberto ? 'none' : 'block';
-  document.getElementById('btn-abrir-novo-ganho').style.display = aberto ? 'block' : 'none';
-}
-
 function adicionarGanho() {
   const v = parseFloat(document.getElementById('g-valor').value);
   if (!v || v <= 0) { alert('Informe um valor válido.'); return; }
@@ -1990,7 +1982,6 @@ function adicionarGanho() {
   document.getElementById('g-horas').value = '';
   document.getElementById('g-km').value = '';
   document.getElementById('g-obs').value = '';
-  toggleFormNovoGanho();
   save(); renderGanhos(); renderGastos(); renderDashboard(); atualizarBotaoHorasHoje();
   switchTab('dashboard');
 }
@@ -2652,7 +2643,7 @@ function renderManutencao() {
   const todasRealizadas = todas.filter(function(m){ return m.status === 'feita'; });
 
   let html = '';
-  html += '<div style="font-size:13px; font-weight:700; color:var(--red); margin-bottom:8px;">🔧 MANUTENÇÕES</div>';
+  html += '<div style="font-size:13px; font-weight:700; color:var(--red); margin-bottom:8px;">🔧 MANUTENÇÕES PENDENTES</div>';
   html += manutsPendentes.length ? manutsPendentes.map(linhaManut).join('') : '<div class="empty" style="padding:14px 0;">Nenhum item pendente. 🎉</div>';
   html += '<div style="font-size:13px; font-weight:700; color:var(--red); margin:22px 0 8px; padding-top:14px; border-top:1px solid var(--border);">⚪ ACESSÓRIOS OPCIONAIS</div>';
   html += acessoriosPendentes.length ? acessoriosPendentes.map(linhaManut).join('') : '<div class="empty" style="padding:14px 0;">Nenhum item pendente. 🎉</div>';
